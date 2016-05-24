@@ -180,3 +180,8 @@ def fx_circle_type():
 @fixture
 def fx_rectangle_type():
     return Rectangle
+
+
+@fixture
+def fx_rectangle(fx_rectangle_type, fx_point):
+    return fx_rectangle_type(fx_point, fx_point)
