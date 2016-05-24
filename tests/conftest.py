@@ -57,11 +57,10 @@ class Point:
         )
 
     def __eq__(self, other) -> bool:
-        attr_matched = all(
+        return isinstance(other, Point) and all(
             getattr(self, attr) == getattr(other, attr)
             for attr in self.__slots__
         )
-        return isinstance(other, Point) and attr_matched
 
     def __nirum_serialize__(self) -> typing.Mapping[str, typing.Any]:
         return serialize_record_type(self)
