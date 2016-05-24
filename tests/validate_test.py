@@ -13,18 +13,18 @@ def test_validate_boxed_type():
 def test_validate_record_type(fx_point, fx_record_type, fx_offset):
     assert validate_record_type(fx_point)
     with raises(TypeError):
-        assert validate_record_type(fx_record_type(left=fx_offset, top=1))
+        validate_record_type(fx_record_type(left=fx_offset, top=1))
     with raises(TypeError):
-        assert validate_record_type(fx_record_type(left=1, top=fx_offset))
+        validate_record_type(fx_record_type(left=1, top=fx_offset))
 
 
 def test_validate_union_type(fx_rectangle, fx_rectangle_type, fx_point):
     assert validate_union_type(fx_rectangle)
     with raises(TypeError):
-        assert validate_union_type(fx_rectangle_type(1, fx_point))
+        validate_union_type(fx_rectangle_type(1, fx_point))
 
     with raises(TypeError):
-        assert validate_union_type(fx_rectangle_type(fx_point, 1))
+        validate_union_type(fx_rectangle_type(fx_point, 1))
 
     with raises(TypeError):
-        assert validate_union_type(fx_rectangle_type(1, 1))
+        validate_union_type(fx_rectangle_type(1, 1))
