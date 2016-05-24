@@ -1,4 +1,5 @@
-from nirum.serialize import serialize_boxed_type, serialize_record_type
+from nirum.serialize import (serialize_boxed_type, serialize_record_type,
+                             serialize_union_type)
 
 
 def test_serialize_boxed_type(fx_offset):
@@ -8,3 +9,21 @@ def test_serialize_boxed_type(fx_offset):
 def test_serialize_record_type(fx_point):
     assert serialize_record_type(fx_point) == {'_type': 'point', 'x': 3.14,
                                                'top': 1.592}
+
+
+def test_serialize_union_type(fx_point, fx_offset, fx_circle_type,
+                              fx_rectangle_type):
+    circle = fx_circle_type(fx_point, fx_offset)
+    s = {
+        '_type': 'shape', '_tag': 'circle',
+        'origin': serialize_record_type(fx_point),
+        'radius': serialize_boxed_type(fx_offset)
+    }
+    assert serialize_union_type(circle) == s
+    rectangle = fx_rectangle_type(fx_point, fx_point)
+    s = {
+        '_type': 'shape', '_tag': 'rectangle',
+        'upper_left': serialize_record_type(fx_point),
+        'lower_right': serialize_record_type(fx_point),
+    }
+    assert serialize_union_type(rectangle) == s
