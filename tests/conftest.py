@@ -76,8 +76,9 @@ class Shape:
 
     def __init__(self, *args, **kwargs):
         raise NotImplementedError(
-            "{0.__qualname__} shouldn't be initialized because it is "
-            "super-type of union. instead, use its subtype.".format(
+            "{0.__module__}.{0.__qualname__} cannot be instantiated "
+            "since it is an abstract class.  Instantiate a concrete subtype "
+            "of it instead.".format(
                 type(self)
             )
         )
