@@ -2,7 +2,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 """
-__all__ = 'validate_boxed_type', 'validate_record_type'
+__all__ = 'validate_boxed_type', 'validate_record_type', 'validate_union_type',
 
 
 def validate_boxed_type(boxed, type_hint):

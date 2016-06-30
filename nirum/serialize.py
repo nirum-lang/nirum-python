@@ -37,7 +37,7 @@ def serialize_record_type(data):
 def serialize_union_type(data):
     s = {
         '_type': data.__nirum_union_behind_name__,
-        '_tag': data.__nirum_tag_behind_name__,
+        '_tag': data.__nirum_tag__.value,
     }
     s.update(serialize_type_with_names(data, data.__nirum_tag_names__))
     return s

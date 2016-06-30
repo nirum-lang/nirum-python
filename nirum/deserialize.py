@@ -53,9 +53,9 @@ def deserialize_union_type(cls, value):
         raise ValueError('{0.__class__.__name__} expect "_type" equal to'
                          ' "{0.__nirum_union_behind_name__}"'
                          ', but found {1}.'.format(cls, value['_type']))
-    if not cls.__nirum_tag_behind_name__ == value['_tag']:
+    if not cls.__nirum_tag__.value == value['_tag']:
         raise ValueError('{0.__class__.__name__} expect "_tag" equal to'
-                         ' "{0.__nirum_tag_behind_name__}"'
+                         ' "{0.__nirum_tag__.value}"'
                          ', but found {1}.'.format(cls, value['_tag']))
     args = {}
     behind_names = cls.__nirum_tag_names__.behind_names
