@@ -28,3 +28,8 @@ def test_validate_union_type(fx_rectangle, fx_rectangle_type, fx_point):
 
     with raises(TypeError):
         validate_union_type(fx_rectangle_type(1, 1))
+
+    with raises(TypeError):
+        rectangle = fx_rectangle_type(fx_point, fx_point)
+        rectangle.__nirum_tag__ = fx_rectangle_type.Tag.circle
+        validate_union_type(rectangle)

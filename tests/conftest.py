@@ -1,10 +1,11 @@
+import enum
 import typing
 
 from pytest import fixture
 
 from nirum.serialize import serialize_record_type, serialize_boxed_type
 from nirum.deserialize import deserialize_record_type, deserialize_boxed_type
-from nirum.validate import validate_record_type
+from nirum.validate import validate_record_type, validate_union_type
 from nirum.constructs import NameDict
 
 
@@ -73,6 +74,12 @@ class Point:
 class Shape:
 
     __nirum_union_behind_name__ = 'shape'
+    __nirum_field_names__ = NameDict([
+    ])
+
+    class Tag(enum.Enum):
+        rectangle = 'rectangle'
+        circle = 'circle'
 
     def __init__(self, *args, **kwargs):
         raise NotImplementedError(
@@ -97,6 +104,7 @@ class Rectangle(Shape):
         'upper_left',
         'lower_right'
     )
+    __nirum_tag__ = Shape.Tag.rectangle
     __nirum_tag_behind_name__ = 'rectangle'
     __nirum_tag_types__ = {
         'upper_left': Point,
@@ -107,6 +115,7 @@ class Rectangle(Shape):
     def __init__(self, upper_left: Point, lower_right: Point) -> None:
         self.upper_left = upper_left
         self.lower_right = lower_right
+        validate_union_type(self)
 
     def __repr__(self) -> str:
         return '{0.__module__}.{0.__qualname__}({1})'.format(
@@ -128,6 +137,7 @@ class Circle(Shape):
         'origin',
         'radius'
     )
+    __nirum_tag__ = Shape.Tag.circle
     __nirum_tag_behind_name__ = 'circle'
     __nirum_tag_types__ = {
         'origin': Point,
@@ -138,6 +148,7 @@ class Circle(Shape):
     def __init__(self, origin: Point, radius: Offset) -> None:
         self.origin = origin
         self.radius = radius
+        validate_union_type(self)
 
     def __repr__(self) -> str:
         return '{0.__module__}.{0.__qualname__}({1})'.format(

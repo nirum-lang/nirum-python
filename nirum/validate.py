@@ -25,6 +25,14 @@ def validate_record_type(record):
 
 
 def validate_union_type(union):
+    if union.__nirum_tag__ != union.Tag[union.__nirum_tag_behind_name__]:
+        raise TypeError(
+            '`Tag` MUST be subtype of `Union` has equivalent type. '
+            'type of `Tag` expected to be {}, but found {}'.format(
+                union.Tag[union.__nirum_tag_behind_name__],
+                union.__nirum_tag__
+            )
+        )
     for attr, type_ in union.__nirum_tag_types__.items():
         data = getattr(union, attr)
         if not isinstance(data, type_):
