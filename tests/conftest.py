@@ -105,7 +105,6 @@ class Rectangle(Shape):
         'lower_right'
     )
     __nirum_tag__ = Shape.Tag.rectangle
-    __nirum_tag_behind_name__ = 'rectangle'
     __nirum_tag_types__ = {
         'upper_left': Point,
         'lower_right': Point
@@ -138,7 +137,6 @@ class Circle(Shape):
         'radius'
     )
     __nirum_tag__ = Shape.Tag.circle
-    __nirum_tag_behind_name__ = 'circle'
     __nirum_tag_types__ = {
         'origin': Point,
         'radius': Offset
