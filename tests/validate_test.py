@@ -28,3 +28,7 @@ def test_validate_union_type(fx_rectangle, fx_rectangle_type, fx_point):
 
     with raises(TypeError):
         validate_union_type(fx_rectangle_type(1, 1))
+
+
+def test_validate_layered_boxed_types(fx_layered_boxed_types):
+    assert validate_boxed_type('test', fx_layered_boxed_types[1])
