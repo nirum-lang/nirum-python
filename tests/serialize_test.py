@@ -6,6 +6,11 @@ def test_serialize_boxed_type(fx_offset):
     assert serialize_boxed_type(fx_offset) == fx_offset.value
 
 
+def test_serialize_layered_boxed_type(fx_layered_boxed_types):
+    actual = fx_layered_boxed_types[1](fx_layered_boxed_types[0]('test'))
+    assert actual.__nirum_serialize__() == 'test'
+
+
 def test_serialize_record_type(fx_point):
     assert serialize_record_type(fx_point) == {'_type': 'point', 'x': 3.14,
                                                'top': 1.592}

@@ -9,7 +9,11 @@ __all__ = (
 
 
 def serialize_boxed_type(data):
-    return data.value
+    value = data.value
+    serialize = getattr(value, '__nirum_serialize__', None)
+    if callable(serialize):
+        return serialize()
+    return value
 
 
 def serialize_type_with_names(data, names):
