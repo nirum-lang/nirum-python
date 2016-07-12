@@ -21,6 +21,10 @@ def deserialize_meta(cls, data):
 
 
 def deserialize_boxed_type(cls, value):
+    deserializer = getattr(cls.__nirum_boxed_type__,
+                           '__nirum_deserialize__', None)
+    if deserializer:
+        value = deserializer(value)
     return cls(value=value)
 
 

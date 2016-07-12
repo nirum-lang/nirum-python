@@ -262,7 +262,7 @@ class B:
 
 class C:
 
-    __nirum_boxed_type__ = A
+    __nirum_boxed_type__ = B
 
     def __init__(self, value: B) -> None:
         validate_boxed_type(value, B)
