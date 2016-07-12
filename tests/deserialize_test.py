@@ -85,3 +85,11 @@ def test_deserialize_meta_boxed(fx_boxed_type, fx_record_type, fx_point):
     meta = deserialize_meta(fx_boxed_type, v)
     boxed = fx_boxed_type(v)
     assert meta == boxed
+
+
+def test_deserialize_multiple_boxed_type(fx_layered_boxed_types):
+    A, B, C = fx_layered_boxed_types
+    assert B.__nirum_deserialize__('lorem') == B(A('lorem'))
+    assert C.__nirum_deserialize__('x') == C(B(A('x')))
+    with raises(TypeError):
+        B.__nirum_deserialize__(1)

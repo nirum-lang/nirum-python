@@ -6,18 +6,7 @@ __all__ = 'validate_boxed_type', 'validate_record_type', 'validate_union_type',
 
 
 def validate_boxed_type(boxed, type_hint) -> bool:
-    actual_boxed_val_type = type(boxed)
-    while True:
-        try:
-            actual_boxed_val_type = actual_boxed_val_type.__nirum_boxed_type__
-        except AttributeError:
-            break
-    while True:
-        try:
-            type_hint = type_hint.__nirum_boxed_type__
-        except AttributeError:
-            break
-    if actual_boxed_val_type != type_hint:
+    if not isinstance(boxed, type_hint):
         raise TypeError('{0} expected, found: {1}'.format(type_hint,
                                                           type(boxed)))
     return boxed
