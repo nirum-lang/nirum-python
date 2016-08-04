@@ -23,9 +23,14 @@ def get_version():
         return '.'.join([str(x) for x in version])
 
 
+service_requires = [
+    # FIXME Test Werkzeug 0.9, 0.10, 0.11 as well
+    'Werkzeug >= 0.11, < 0.12',
+]
 install_requires = [
     'setuptools',
-]
+    'iso8601',
+] + service_requires
 tests_require = [
     'pytest >= 2.9.0',
     'import-order',
@@ -48,6 +53,7 @@ setup(
     packages=find_packages(exclude=['tests']),
     install_requires=install_requires,
     extras_require={
+        'service': service_requires,
         'tests': tests_require,
         'docs': docs_require,
     },
