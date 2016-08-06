@@ -1,5 +1,11 @@
+import datetime
+import decimal
+import uuid
+
+from pytest import mark
+
 from nirum.serialize import (serialize_boxed_type, serialize_record_type,
-                             serialize_union_type)
+                             serialize_meta, serialize_union_type)
 
 
 def test_serialize_boxed_type(fx_offset):
@@ -38,3 +44,34 @@ def test_multiple_boxed_type(fx_layered_boxed_types):
     A, B, _ = fx_layered_boxed_types
     assert B(A('hello')).value.value == 'hello'
     assert B(A('lorem')).__nirum_serialize__() == 'lorem'
+
+
+@mark.parametrize(
+    'd, expect',
+    [
+        (1, 1),
+        (1.1, 1.1),
+        ({1, 2, 3}, [1, 2, 3]),
+        (True, True),
+        (
+            uuid.UUID('7471A1F2-442E-4991-B6E8-77C6BD286785'),
+            '7471a1f2-442e-4991-b6e8-77c6bd286785'
+        ),
+        (decimal.Decimal('3.14'), '3.14'),
+        (
+            datetime.datetime(2016, 8, 5, 3, 46, 37,
+                              tzinfo=datetime.timezone.utc),
+            '2016-08-05T03:46:37+00:00'
+        ),
+        (
+            datetime.date(2016, 8, 5),
+            '2016-08-05'
+        ),
+        (
+            {datetime.date(2016, 8, 5), datetime.date(2016, 8, 6)},
+            ['2016-08-05', '2016-08-06']
+        ),
+    ]
+)
+def test_serialize_meta(d, expect):
+    assert serialize_meta(d) == expect

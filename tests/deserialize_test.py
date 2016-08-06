@@ -9,7 +9,7 @@ from nirum.serialize import serialize_record_type
 from nirum.deserialize import (deserialize_boxed_type, deserialize_meta,
                                deserialize_tuple_type,
                                deserialize_record_type, deserialize_union_type,
-                               deserialize_primitive)
+                               deserialize_optional, deserialize_primitive)
 
 
 def test_deserialize_boxed_type(fx_boxed_type):
@@ -236,3 +236,15 @@ def test_deserialize_tuple():
 
     with raises(ValueError):
         deserialize_tuple_type(typing.Tuple[str, str], ('a', 1))
+
+
+def test_deserialize_optional():
+    assert deserialize_optional(typing.Optional[str], 'abc') == 'abc'
+    assert deserialize_optional(typing.Optional[str], None) is None
+    assert deserialize_optional(typing.Union[str, int], 'str') == 'str'
+    assert deserialize_optional(typing.Union[str, int], 1) == 1
+    with raises(ValueError):
+        deserialize_optional(typing.Union[str, int], None)
+
+    with raises(ValueError):
+        deserialize_optional(typing.Optional[str], 1)

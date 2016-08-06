@@ -4,6 +4,7 @@
 """
 import datetime
 import decimal
+import enum
 import typing
 import uuid
 
@@ -14,6 +15,7 @@ __all__ = (
     'deserialize_boxed_type',
     'deserialize_iterable_abstract_type',
     'deserialize_meta',
+    'deserialize_optional',
     'deserialize_primitive',
     'deserialize_record_type',
     'deserialize_tuple_type',
@@ -121,6 +123,14 @@ def deserialize_primitive(cls, data):
     return d
 
 
+def deserialize_optional(cls, data):
+    for union_type in cls.__union_params__:
+        if isinstance(data, union_type):
+            return data
+    else:
+        raise ValueError()
+
+
 def deserialize_meta(cls, data):
     if hasattr(cls, '__nirum_tag__'):
         d = deserialize_union_type(cls, data)
@@ -134,8 +144,12 @@ def deserialize_meta(cls, data):
         d = deserialize_tuple_type(cls, data)
     elif is_support_abstract_type(cls):
         d = deserialize_abstract_type(cls, data)
+    elif type(cls) is typing.UnionMeta:
+        d = deserialize_optional(cls, data)
     elif callable(cls) and cls in _NIRUM_PRIMITIVE_TYPE:
         d = deserialize_primitive(cls, data)
+    elif isinstance(cls, enum.EnumMeta):
+        d = cls(data)
     else:
         raise TypeError('data is not deserializable: {!r} as {!r}'.format(
             data, cls

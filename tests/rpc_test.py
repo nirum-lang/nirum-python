@@ -17,18 +17,18 @@ class MusicService(Service):
         'get_music_by_artist_name': {
             'artist_name': str,
             '_return': typing.Sequence[str],
-            '_name': NameDict([
+            '_names': NameDict([
                 ('artist_name', 'artist_name')
             ])
         },
         'incorrect_return': {
             '_return': str,
-            '_name': NameDict([])
+            '_names': NameDict([])
         },
         'get_artist_by_music': {
             'music': str,
             '_return': str,
-            '_name': NameDict([('music', 'norae')])
+            '_names': NameDict([('music', 'norae')])
         }
     }
     __nirum_method_names__ = NameDict([
@@ -167,6 +167,17 @@ def test_wsgi_app_error(fx_test_client):
 
         }
     )
+    # incorrect return
+    assert_response(
+        fx_test_client.post('/?method=incorrect_return'),
+        400,
+        {
+            '_type': 'error',
+            '_tag': 'bad_request',
+            'message': "Incorrect return type 'int' for 'incorrect_return'. "
+                       "expected 'str'."
+        }
+    )
 
 
 def test_procedure_bad_request(fx_test_client):
@@ -195,15 +206,6 @@ def test_procedure_bad_request(fx_test_client):
             '_tag': 'bad_request',
             'message': "Incorrect type 'int' for 'artist_name'. "
                        "expected 'str'."
-        }
-    )
-    assert_response(
-        fx_test_client.post('/?method=incorrect_return'),
-        400,
-        {
-            '_type': 'error',
-            '_tag': 'bad_request',
-            'message': "Incorrect return type 'int'. expected 'str'."
         }
     )
 

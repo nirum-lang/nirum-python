@@ -4,7 +4,7 @@
 """
 import collections
 
-__all__ = 'NameDict',
+__all__ = 'NameDict', 'name_dict_type'
 
 
 class NameDict(collections.Mapping):
@@ -22,3 +22,9 @@ class NameDict(collections.Mapping):
 
     def __len__(self):
         return len(self.facial_names)
+
+
+# To eliminate imported vars from being overridden by
+# the runtime class, aliasing runtime class into lower case with underscore
+# with postfix named `_type`
+name_dict_type = NameDict
