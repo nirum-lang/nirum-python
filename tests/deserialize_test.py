@@ -241,10 +241,11 @@ def test_deserialize_tuple():
 def test_deserialize_optional():
     assert deserialize_optional(typing.Optional[str], 'abc') == 'abc'
     assert deserialize_optional(typing.Optional[str], None) is None
-    assert deserialize_optional(typing.Union[str, int], 'str') == 'str'
-    assert deserialize_optional(typing.Union[str, int], 1) == 1
+    with raises(ValueError):
+        deserialize_optional(typing.Union[str, int], 'str')
+    with raises(ValueError):
+        deserialize_optional(typing.Union[str, int], 1)
     with raises(ValueError):
         deserialize_optional(typing.Union[str, int], None)
-
     with raises(ValueError):
         deserialize_optional(typing.Optional[str], 1)
