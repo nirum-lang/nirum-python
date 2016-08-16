@@ -4,6 +4,8 @@
 """
 import json
 import typing
+import urllib.parse
+import urllib.request
 
 from werkzeug.exceptions import HTTPException
 from werkzeug.http import HTTP_STATUS_CODES
@@ -14,11 +16,15 @@ from .constructs import NameDict
 from .deserialize import deserialize_meta
 from .exc import (InvalidNirumServiceMethodNameError,
                   InvalidNirumServiceMethodTypeError,
+                  NirumHttpError,
                   NirumProcedureArgumentRequiredError,
-                  NirumProcedureArgumentValueError)
+                  NirumProcedureArgumentValueError,
+                  NirumUrlError,
+                  UnexpectedNirumResponseError)
+from .func import url_endswith_slash
 from .serialize import serialize_meta
 
-__all__ = 'WsgiApp', 'Service', 'service_type'
+__all__ = 'Client', 'WsgiApp', 'Service', 'client_type', 'service_type'
 JSONType = typing.Mapping[
     str, typing.Union[str, float, int, bool, object]
 ]
@@ -173,7 +179,7 @@ class WsgiApp:
                         )
             )
         else:
-            return self._json_response(200, result)
+            return self._json_response(200, serialize_meta(result))
 
     def _parse_procedure_arguments(
         self,
@@ -283,7 +289,54 @@ class WsgiApp:
         )
 
 
+class Client:
+
+    def __init__(
+        self, url: str,
+        opener: urllib.request.OpenerDirector=urllib.request.build_opener()
+    ):
+        self.url = url_endswith_slash(url)
+        self.opener = opener
+
+    def ping(self):
+        req = urllib.request.Request(
+            urllib.parse.urljoin(self.url, './ping/'),
+            headers={'Content-Type': 'application/json;charset=utf-8',
+                     'Accepts': 'application/json'}
+        )
+        return self.make_request(req)
+
+    def remote_call(self,
+                    method_name: str,
+                    payload: JSONType={}) -> JSONType:
+        qs = urllib.parse.urlencode({'method': method_name})
+        scheme, netloc, path, _, _ = urllib.parse.urlsplit(self.url)
+        request_url = urllib.parse.urlunsplit((
+            scheme, netloc, path, qs, ''
+        ))
+        req = urllib.request.Request(
+            request_url, data=json.dumps(payload).encode('utf-8'),
+            headers={'Content-Type': 'application/json;charset=utf-8',
+                     'Accepts': 'application/json'}
+        )
+        return self.make_request(req)
+
+    def make_request(self, request: urllib.request.Request) -> JSONType:
+        try:
+            response = self.opener.open(request)
+        except urllib.error.URLError as e:
+            raise NirumUrlError(e)
+        except urllib.error.HTTPError as e:
+            raise NirumHttpError(e.url, e.code, e.msg, e.hdrs, e.fp)
+        response_text = response.read()
+        if 200 <= response.status < 300:
+            return response_text.decode('utf-8')
+        else:
+            raise UnexpectedNirumResponseError(response_text)
+
+
 # To eliminate imported vars from being overridden by
 # the runtime class, aliasing runtime class into lower case with underscore
 # with postfix named `_type`
 service_type = Service
+client_type = Client

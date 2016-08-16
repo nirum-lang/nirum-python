@@ -238,9 +238,10 @@ def test_deserialize_tuple():
         deserialize_tuple_type(typing.Tuple[str, str], ('a', 1))
 
 
-def test_deserialize_optional():
+def test_deserialize_optional(fx_record_type):
     assert deserialize_optional(typing.Optional[str], 'abc') == 'abc'
     assert deserialize_optional(typing.Optional[str], None) is None
+    assert deserialize_optional(typing.Optional[fx_record_type], None) is None
     with raises(ValueError):
         deserialize_optional(typing.Union[str, int], 'str')
     with raises(ValueError):

@@ -2,13 +2,16 @@ import json
 import typing
 
 from pytest import fixture, raises, mark
-from werkzeug.test import Client
+from werkzeug.test import Client as TestClient
 from werkzeug.wrappers import Response
 
 from nirum.constructs import NameDict
 from nirum.exc import (InvalidNirumServiceMethodTypeError,
                        InvalidNirumServiceMethodNameError)
-from nirum.rpc import Service, WsgiApp
+from nirum.deserialize import deserialize_meta
+from nirum.serialize import serialize_meta
+from nirum.rpc import Client, Service, WsgiApp
+from nirum.test import MockOpener
 
 
 class MusicService(Service):
@@ -85,6 +88,39 @@ class MusicServiceTypeErrorImpl(MusicService):
     get_music_by_artist_name = 1
 
 
+class MusicServiceClient(Client, MusicService):
+
+    def get_music_by_artist_name(
+        self, artist_name: str
+    ) -> typing.Sequence[str]:
+        meta = self.__nirum_service_methods__['get_music_by_artist_name']
+        payload = {meta['_names']['artist_name']: serialize_meta(artist_name)}
+        return deserialize_meta(
+            meta['_return'],
+            json.loads(
+                self.remote_call(
+                    self.__nirum_method_names__['get_music_by_artist_name'],
+                    payload=payload
+                )
+            )
+        )
+
+    def get_artist_by_music(
+        self, music: str
+    ) -> typing.Sequence[str]:
+        meta = self.__nirum_service_methods__['get_artist_by_music']
+        payload = {meta['_names']['music']: serialize_meta(music)}
+        return deserialize_meta(
+            meta['_return'],
+            json.loads(
+                self.remote_call(
+                    self.__nirum_method_names__['get_artist_by_music'],
+                    payload=payload
+                )
+            )
+        )
+
+
 @mark.parametrize('impl, error_class', [
     (MusicServiceNameErrorImpl, InvalidNirumServiceMethodNameError),
     (MusicServiceTypeErrorImpl, InvalidNirumServiceMethodTypeError),
@@ -101,7 +137,7 @@ def fx_music_wsgi():
 
 @fixture
 def fx_test_client(fx_music_wsgi):
-    return Client(fx_music_wsgi, Response)
+    return TestClient(fx_music_wsgi, Response)
 
 
 def test_wsgi_app_ping(fx_music_wsgi, fx_test_client):
@@ -278,3 +314,29 @@ def test_wsgi_app_with_behind_name(fx_test_client):
         200,
         'damien rice'
     )
+
+
+@mark.parametrize('url, expected_url', [
+    ('http://foobar.com', 'http://foobar.com/'),
+    ('http://foobar.com/', 'http://foobar.com/'),
+    ('http://foobar.com?a=1#a', 'http://foobar.com/'),
+    ('http://foobar.com/?a=1#a', 'http://foobar.com/'),
+])
+def test_rpc_client(url, expected_url):
+    assert Client(url).url == expected_url
+
+
+@mark.parametrize('url', ['adfoj', 'http://'])
+def test_rpc_client_error(url):
+    with raises(ValueError):
+        Client(url)
+
+
+def test_rpc_client_service(monkeypatch):
+    url = 'http://foobar.com/'
+    client = MusicServiceClient(url, MockOpener(url, MusicServiceImpl))
+    nine_crimes = '9 crimes'
+    damien_music = [nine_crimes, 'Elephant']
+    damien_rice = 'damien rice'
+    assert client.get_music_by_artist_name(damien_rice) == damien_music
+    assert client.get_artist_by_music(nine_crimes) == damien_rice
