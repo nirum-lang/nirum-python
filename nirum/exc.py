@@ -2,13 +2,18 @@
 ~~~~~~~~~~~~~~~~~~
 
 """
+import urllib.error
+
 __all__ = (
     'InvalidNirumServiceMethodNameError',
     'InvalidNirumServiceMethodTypeError',
+    'NirumHttpError',
     'NirumProcedureArgumentError',
     'NirumProcedureArgumentRequiredError',
     'NirumProcedureArgumentValueError',
     'NirumServiceError',
+    'NirumUrlError',
+    'UnexpectedNirumResponseError',
 )
 
 
@@ -34,3 +39,19 @@ class NirumProcedureArgumentRequiredError(NirumProcedureArgumentError):
 
 class NirumProcedureArgumentValueError(NirumProcedureArgumentError):
     """WIP"""
+
+
+class NirumHttpError(urllib.error.HTTPError, NirumServiceError):
+    """TODO"""
+
+
+class NirumUrlError(urllib.error.URLError, NirumServiceError):
+    """TODO"""
+
+    def __init__(self, exc: urllib.error.URLError):
+        self.text = exc.read()
+        super().__init__(exc.reason)
+
+
+class UnexpectedNirumResponseError(NirumHttpError):
+    """TODO"""

@@ -124,9 +124,18 @@ def deserialize_primitive(cls, data):
 
 
 def deserialize_optional(cls, data):
+    if not any(isinstance(None, ut) for ut in cls.__union_params__):
+        raise ValueError(cls)
+    if data is None:
+        return data
     for union_type in cls.__union_params__:
-        if isinstance(data, union_type):
-            return data
+        if isinstance(None, union_type):
+            continue
+        else:
+            try:
+                return deserialize_meta(union_type, data)
+            except ValueError:
+                continue
     else:
         raise ValueError()
 
