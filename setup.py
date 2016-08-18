@@ -1,7 +1,7 @@
 import ast
 import sys
 
-from setuptools import find_packages, setup
+from setuptools import find_packages, setup,  __version__ as setuptools_version
 
 
 def readme():
@@ -24,7 +24,7 @@ def get_version():
         return '.'.join([str(x) for x in version])
 
 
-setup_requires = ['setuptools >= 17.1']
+setup_requires = []
 service_requires = [
     # FIXME Test Werkzeug 0.9, 0.10, 0.11 as well
     'Werkzeug >= 0.11, < 0.12',
@@ -40,11 +40,25 @@ tests_require = [
 docs_require = [
     'Sphinx',
 ]
+extras_require = {
+    'service': service_requires,
+    'tests': tests_require,
+    'docs': docs_require,
+}
 below35_requires = [
     'typing',
 ]
+
+
 if 'bdist_wheel' not in sys.argv and sys.version_info < (3, 5):
     install_requires.extend(below35_requires)
+
+
+if tuple(map(int, setuptools_version.split('.'))) < (17, 1):
+    setup_requires = ['setuptools >= 17.1']
+    extras_require.update({":python_version=='3.4'": 'typing'})
+else:
+    extras_require.update({":python_version<'3.5'": 'typing'})
 
 
 setup(
@@ -59,11 +73,6 @@ setup(
     packages=find_packages(exclude=['tests']),
     install_requires=install_requires,
     setup_requires=setup_requires,
-    extras_require={
-        ":python_version<'3.5'": below35_requires,
-        'service': service_requires,
-        'tests': tests_require,
-        'docs': docs_require,
-    },
+    extras_require=extras_require,
     classifiers=[]
 )
