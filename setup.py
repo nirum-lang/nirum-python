@@ -29,7 +29,7 @@ service_requires = [
     'Werkzeug >= 0.11, < 0.12',
 ]
 install_requires = [
-    'setuptools',
+    'setuptools >= 25.2.0',
     'iso8601',
 ] + service_requires
 tests_require = [
