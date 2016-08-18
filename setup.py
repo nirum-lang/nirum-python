@@ -24,12 +24,12 @@ def get_version():
         return '.'.join([str(x) for x in version])
 
 
+setup_requires = ['setuptools >= 17.1']
 service_requires = [
     # FIXME Test Werkzeug 0.9, 0.10, 0.11 as well
     'Werkzeug >= 0.11, < 0.12',
 ]
 install_requires = [
-    'setuptools >= 25.2.0',
     'iso8601',
 ] + service_requires
 tests_require = [
@@ -58,6 +58,7 @@ setup(
     license='MIT license',
     packages=find_packages(exclude=['tests']),
     install_requires=install_requires,
+    setup_requires=setup_requires,
     extras_require={
         ":python_version<'3.5'": below35_requires,
         'service': service_requires,
