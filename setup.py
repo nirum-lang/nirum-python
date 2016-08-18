@@ -1,4 +1,5 @@
 import ast
+import sys
 
 from setuptools import find_packages, setup
 
@@ -39,6 +40,11 @@ tests_require = [
 docs_require = [
     'Sphinx',
 ]
+below35_requires = [
+    'typing',
+]
+if 'bdist_wheel' not in sys.argv and sys.version_info < (3, 5):
+    install_requires.extend(below35_requires)
 
 
 setup(
@@ -53,6 +59,7 @@ setup(
     packages=find_packages(exclude=['tests']),
     install_requires=install_requires,
     extras_require={
+        ":python_version<'3.5'": below35_requires,
         'service': service_requires,
         'tests': tests_require,
         'docs': docs_require,
