@@ -56,9 +56,9 @@ if 'bdist_wheel' not in sys.argv and sys.version_info < (3, 5):
 
 if tuple(map(int, setuptools_version.split('.'))) < (17, 1):
     setup_requires = ['setuptools >= 17.1']
-    extras_require.update({":python_version=='3.4'": 'typing'})
+    extras_require.update({":python_version=='3.4'": below35_requires})
 else:
-    extras_require.update({":python_version<'3.5'": 'typing'})
+    extras_require.update({":python_version<'3.5'": below35_requires})
 
 
 setup(
