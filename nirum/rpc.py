@@ -153,7 +153,7 @@ class WsgiApp:
             )
         try:
             request_json = json.loads(payload)
-        except json.decoder.JSONDecodeError:
+        except ValueError:
             return self.error(
                 400,
                 request,

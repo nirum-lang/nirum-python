@@ -52,11 +52,11 @@ def deserialize_iterable_abstract_type(cls, cls_origin_type, data):
     }
     deserialized_data = data
     cls_primitive_type = abstract_type_map[cls_origin_type]
-    if isinstance(cls.__parameters__[0], typing.TypeVar):
+    if isinstance(cls.__args__[0], typing.TypeVar):
         deserialized_data = cls_primitive_type(data)
     else:
         deserialized_data = cls_primitive_type(
-            deserialize_meta(cls.__parameters__[0], d) for d in data
+            deserialize_meta(cls.__args__[0], d) for d in data
         )
     return deserialized_data
 
@@ -148,7 +148,7 @@ def deserialize_meta(cls, data):
     elif hasattr(cls, '__nirum_boxed_type__'):
         d = deserialize_boxed_type(cls, data)
     elif type(cls) is typing.TupleMeta:
-        # typing.Tuple dosen't have either `__origin__` and `__parameters__`
+        # typing.Tuple dosen't have either `__origin__` and `__args__`
         # so it have to be handled special case.
         d = deserialize_tuple_type(cls, data)
     elif is_support_abstract_type(cls):
