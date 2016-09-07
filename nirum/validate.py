@@ -2,10 +2,29 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 """
-__all__ = 'validate_boxed_type', 'validate_record_type', 'validate_union_type',
+import typing
+
+__all__ = (
+    'validate_boxed_type', 'validate_record_type', 'validate_type',
+    'validate_union_type',
+)
 
 
-def validate_boxed_type(boxed, type_hint) -> bool:
+def validate_type(data, type_):
+    instance_check = False
+    try:
+        instance_check = isinstance(data, type_)
+    except TypeError:
+        if type(type_) is typing.UnionMeta:
+            instance_check = any(
+                isinstance(data, t) for t in type_.__union_params__
+            )
+        else:
+            raise ValueError('{!r} cannot validated.'.format(type_))
+    return instance_check
+
+
+def validate_boxed_type(boxed, type_hint):
     if not isinstance(boxed, type_hint):
         raise TypeError('{0} expected, found: {1}'.format(type_hint,
                                                           type(boxed)))
@@ -15,7 +34,7 @@ def validate_boxed_type(boxed, type_hint) -> bool:
 def validate_record_type(record):
     for attr, type_ in record.__nirum_field_types__.items():
         data = getattr(record, attr)
-        if not isinstance(data, type_):
+        if not validate_type(data, type_):
             raise TypeError(
                 'expect {0.__class__.__name__}.{1} to be {2}'
                 ', but found: {3}'.format(record, attr, type_, type(data))
@@ -27,7 +46,7 @@ def validate_record_type(record):
 def validate_union_type(union):
     for attr, type_ in union.__nirum_tag_types__.items():
         data = getattr(union, attr)
-        if not isinstance(data, type_):
+        if not validate_type(data, type_):
             raise TypeError(
                 'expect {0.__class__.__name__}.{1} to be {2}'
                 ', but found: {3}'.format(union, attr, type_, type(data))

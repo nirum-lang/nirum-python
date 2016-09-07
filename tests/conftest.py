@@ -1,4 +1,5 @@
 import enum
+import decimal
 import typing
 
 from pytest import fixture
@@ -7,7 +8,7 @@ from nirum.serialize import serialize_record_type, serialize_boxed_type
 from nirum.deserialize import deserialize_record_type, deserialize_boxed_type
 from nirum.validate import (validate_boxed_type, validate_record_type,
                             validate_union_type)
-from nirum.constructs import NameDict
+from nirum.constructs import NameDict, name_dict_type
 
 
 class Offset:
@@ -165,6 +166,54 @@ class Circle(Shape):
         )
 
 
+class Location:
+    # TODO: docstring
+
+    __slots__ = (
+        'name',
+        'lat',
+        'lng',
+    )
+    __nirum_record_behind_name__ = 'location'
+    __nirum_field_types__ = {
+        'name': typing.Optional[str],
+        'lat': decimal.Decimal,
+        'lng': decimal.Decimal
+    }
+    __nirum_field_names__ = name_dict_type([
+        ('name', 'name'),
+        ('lat', 'lat'),
+        ('lng', 'lng')
+    ])
+
+    def __init__(self, name: typing.Optional[str],
+                 lat: decimal.Decimal, lng: decimal.Decimal) -> None:
+        self.name = name
+        self.lat = lat
+        self.lng = lng
+        validate_record_type(self)
+
+    def __repr__(self) -> str:
+        return '{0.__module__}.{0.__qualname__}({1})'.format(
+            type(self),
+            ', '.join('{}={}'.format(attr, getattr(self, attr))
+                      for attr in self.__slots__)
+        )
+
+    def __eq__(self, other) -> bool:
+        return isinstance(other, Location) and all(
+            getattr(self, attr) == getattr(other, attr)
+            for attr in self.__slots__
+        )
+
+    def __nirum_serialize__(self) -> typing.Mapping[str, typing.Any]:
+        return serialize_record_type(self)
+
+    @classmethod
+    def __nirum_deserialize__(cls: type, value) -> 'Location':
+        return deserialize_record_type(cls, value)
+
+
 @fixture
 def fx_boxed_type():
     return Offset
@@ -293,3 +342,8 @@ class C:
 @fixture
 def fx_layered_boxed_types():
     return A, B, C
+
+
+@fixture
+def fx_location_record():
+    return Location
