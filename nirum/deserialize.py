@@ -38,6 +38,7 @@ def is_support_abstract_type(t):
         typing.Sequence,
         typing.List,
         typing.Set,
+        typing.AbstractSet,
         typing.Mapping,
         typing.Dict,
     }
@@ -49,6 +50,7 @@ def deserialize_iterable_abstract_type(cls, cls_origin_type, data):
         typing.Sequence: list,
         typing.List: list,
         typing.Set: set,
+        typing.AbstractSet: set,
     }
     deserialized_data = data
     cls_primitive_type = abstract_type_map[cls_origin_type]
@@ -68,11 +70,15 @@ def deserialize_abstract_type(cls, data):
         typing.Mapping: dict,
         typing.Dict: dict,
         typing.Set: set,
+        typing.AbstractSet: set,
     }
     cls_origin_type = cls.__origin__
     if cls_origin_type is None:
         cls_origin_type = cls
-    iterable_types = {typing.Sequence, typing.List, typing.Tuple, typing.Set}
+    iterable_types = {
+        typing.Sequence, typing.List, typing.Tuple, typing.Set,
+        typing.AbstractSet
+    }
     if cls_origin_type in iterable_types:
         return deserialize_iterable_abstract_type(cls, cls_origin_type, data)
     else:

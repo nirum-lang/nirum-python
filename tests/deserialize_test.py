@@ -214,6 +214,7 @@ def test_deserialize_primitive_error(data, t):
         (typing.Sequence, list),
         (typing.List, list),
         (typing.Set, set),
+        (typing.AbstractSet, set),
     ]
 )
 def test_deserialize_meta_iterable(
