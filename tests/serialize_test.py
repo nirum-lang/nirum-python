@@ -51,7 +51,6 @@ def test_multiple_boxed_type(fx_layered_boxed_types):
     [
         (1, 1),
         (1.1, 1.1),
-        ({1, 2, 3}, [1, 2, 3]),
         (True, True),
         (
             uuid.UUID('7471A1F2-442E-4991-B6E8-77C6BD286785'),
@@ -67,11 +66,31 @@ def test_multiple_boxed_type(fx_layered_boxed_types):
             datetime.date(2016, 8, 5),
             '2016-08-05'
         ),
+    ]
+)
+def test_serialize_meta(d, expect):
+    assert serialize_meta(d) == expect
+
+
+@mark.parametrize(
+    'd, expect', [
+        ({1, 2, 3}, [1, 2, 3]),
         (
             {datetime.date(2016, 8, 5), datetime.date(2016, 8, 6)},
             ['2016-08-05', '2016-08-06']
         ),
     ]
 )
-def test_serialize_meta(d, expect):
-    assert serialize_meta(d) == expect
+def test_serialize_meta_set(d, expect):
+    serialized = serialize_meta(d)
+    for e in expect:
+        e in serialized
+
+
+def test_serialize_meta_set_of_record(fx_record_type, fx_boxed_type,
+                                      fx_offset):
+    record = fx_record_type(fx_offset, fx_offset)
+    record2 = fx_record_type(fx_boxed_type(1.1), fx_boxed_type(1.2))
+    serialize_result = serialize_meta({record, record2})
+    assert record.__nirum_serialize__() in serialize_result
+    assert record2.__nirum_serialize__() in serialize_result

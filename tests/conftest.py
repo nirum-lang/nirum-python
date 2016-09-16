@@ -33,6 +33,9 @@ class Offset:
     ) -> 'Offset':
         return deserialize_boxed_type(cls, value)
 
+    def __hash__(self) -> int: # noqa
+        return hash((self.__class__, self.value))
+
 
 class Point:
 
@@ -73,6 +76,9 @@ class Point:
     @classmethod
     def __nirum_deserialize__(cls: type, values) -> 'Point':
         return deserialize_record_type(cls, values)
+
+    def __hash__(self) -> int:
+        return hash((self.__class__, self.left, self.top))
 
 
 class Shape:
