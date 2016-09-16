@@ -75,3 +75,12 @@ def test_multiple_boxed_type(fx_layered_boxed_types):
 )
 def test_serialize_meta(d, expect):
     assert serialize_meta(d) == expect
+
+
+def test_serialize_meta_set_of_record(fx_record_type, fx_boxed_type,
+                                      fx_offset):
+    record = fx_record_type(fx_offset, fx_offset)
+    record2 = fx_record_type(fx_boxed_type(1.1), fx_boxed_type(1.2))
+    serialize_result = serialize_meta({record, record2})
+    assert record.__nirum_serialize__() in serialize_result
+    assert record2.__nirum_serialize__() in serialize_result
