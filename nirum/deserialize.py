@@ -147,7 +147,7 @@ def deserialize_optional(cls, data):
 
 
 def deserialize_meta(cls, data):
-    if hasattr(cls, '__nirum_tag__'):
+    if hasattr(cls, '__nirum_tag__') or hasattr(cls, 'Tag'):
         d = deserialize_union_type(cls, data)
     elif hasattr(cls, '__nirum_record_behind_name__'):
         d = deserialize_record_type(cls, data)
@@ -205,6 +205,18 @@ def deserialize_union_type(cls, value):
         raise ValueError('"_type" field is missing.')
     if '_tag' not in value:
         raise ValueError('"_tag" field is missing.')
+    if not hasattr(cls, '__nirum_tag__'):
+        for sub_cls in cls.__subclasses__():
+            if sub_cls.__nirum_tag__.value == value['_tag']:
+                cls = sub_cls
+                break
+        else:
+            raise ValueError(
+                '{0!r} is not deserialzable tag of '
+                '`{1.__name__}`.'.format(
+                    value, cls
+                )
+            )
     if not cls.__nirum_union_behind_name__ == value['_type']:
         raise ValueError('{0.__class__.__name__} expect "_type" equal to'
                          ' "{0.__nirum_union_behind_name__}"'
