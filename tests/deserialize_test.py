@@ -34,7 +34,7 @@ def test_deserialize_record_type(fx_boxed_type, fx_record_type):
 
 
 def test_deserialize_union_type(fx_circle_type, fx_rectangle_type,
-                                fx_point):
+                                fx_point, fx_shape_type):
     with raises(ValueError):
         deserialize_union_type(fx_circle_type, {})
 
@@ -47,6 +47,10 @@ def test_deserialize_union_type(fx_circle_type, fx_rectangle_type,
     with raises(ValueError):
         deserialize_union_type(fx_rectangle_type,
                                {'_type': 'shape', '_tag': 'circle'})
+
+    with raises(ValueError):
+        deserialize_union_type(fx_shape_type,
+                               {'_type': 'shape', '_tag': 'semo'})
 
     deserialize = deserialize_union_type(
         fx_rectangle_type,
@@ -74,7 +78,7 @@ def test_deserialize_meta_record(fx_boxed_type, fx_record_type, fx_point):
     assert meta == record
 
 
-def test_deserialize_meta_union(fx_rectangle_type, fx_point):
+def test_deserialize_meta_union(fx_rectangle_type, fx_point, fx_shape_type):
     d = {
         '_type': 'shape', '_tag': 'rectangle',
         'upper_left': serialize_record_type(fx_point),
@@ -85,6 +89,8 @@ def test_deserialize_meta_union(fx_rectangle_type, fx_point):
         fx_rectangle_type, d
     )
     assert meta == union
+    meta_from_shape = deserialize_meta(fx_shape_type, d)
+    assert meta_from_shape == meta
 
 
 def test_deserialize_meta_boxed(fx_boxed_type, fx_record_type, fx_point):

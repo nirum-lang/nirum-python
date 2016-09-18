@@ -353,3 +353,8 @@ def fx_layered_boxed_types():
 @fixture
 def fx_location_record():
     return Location
+
+
+@fixture
+def fx_shape_type():
+    return Shape
