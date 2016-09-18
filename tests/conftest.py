@@ -1,6 +1,7 @@
 import enum
 import decimal
 import typing
+import uuid
 
 from pytest import fixture
 
@@ -11,11 +12,39 @@ from nirum.validate import (validate_boxed_type, validate_record_type,
 from nirum.constructs import NameDict, name_dict_type
 
 
+class Token:
+
+    __nirum_boxed_type__ = uuid.UUID
+
+    def __init__(self, value: uuid.UUID) -> None:
+        validate_boxed_type(value, uuid.UUID)
+        self.value = value
+
+    def __eq__(self, other) -> bool:
+        return (isinstance(other, Token) and self.value == other.value)
+
+    def __hash__(self) -> int:
+        return hash(self.value)
+
+    def __nirum_serialize__(self) -> typing.Mapping[str, typing.Any]:
+        return serialize_boxed_type(self)
+
+    @classmethod
+    def __nirum_deserialize__(
+        cls: type, value: typing.Mapping[str, typing.Any]
+    ) -> 'Token':
+        return deserialize_boxed_type(cls, value)
+
+    def __hash__(self) -> int: # noqa
+        return hash((self.__class__, self.value))
+
+
 class Offset:
 
     __nirum_boxed_type__ = float
 
     def __init__(self, value: float) -> None:
+        validate_boxed_type(value, float)
         self.value = value
 
     def __eq__(self, other) -> bool:
@@ -358,3 +387,8 @@ def fx_location_record():
 @fixture
 def fx_shape_type():
     return Shape
+
+
+@fixture
+def fx_token_type():
+    return Token

@@ -177,6 +177,8 @@ def deserialize_boxed_type(cls, value):
                            '__nirum_deserialize__', None)
     if deserializer:
         value = deserializer(value)
+    else:
+        value = deserialize_meta(cls.__nirum_boxed_type__, value)
     return cls(value=value)
 
 
