@@ -17,7 +17,8 @@ def serialize_boxed_type(data):
     serialize = getattr(value, '__nirum_serialize__', None)
     if callable(serialize):
         return serialize()
-    return value
+    else:
+        return serialize_meta(value)
 
 
 def serialize_type_with_names(data, names):

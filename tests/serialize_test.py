@@ -8,8 +8,10 @@ from nirum.serialize import (serialize_boxed_type, serialize_record_type,
                              serialize_meta, serialize_union_type)
 
 
-def test_serialize_boxed_type(fx_offset):
+def test_serialize_boxed_type(fx_offset, fx_token_type):
     assert serialize_boxed_type(fx_offset) == fx_offset.value
+    token = uuid.uuid4()
+    assert serialize_boxed_type(fx_token_type(token)) == str(token)
 
 
 def test_serialize_layered_boxed_type(fx_layered_boxed_types):

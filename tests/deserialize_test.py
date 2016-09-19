@@ -12,9 +12,12 @@ from nirum.deserialize import (deserialize_boxed_type, deserialize_meta,
                                deserialize_optional, deserialize_primitive)
 
 
-def test_deserialize_boxed_type(fx_boxed_type):
+def test_deserialize_boxed_type(fx_boxed_type, fx_token_type):
     v = 3.14
     assert fx_boxed_type(v) == deserialize_boxed_type(fx_boxed_type, v)
+    uuid_ = uuid.uuid4()
+    t = str(uuid_)
+    assert fx_token_type(uuid_) == deserialize_boxed_type(fx_token_type, t)
 
 
 def test_deserialize_record_type(fx_boxed_type, fx_record_type):
@@ -93,10 +96,15 @@ def test_deserialize_meta_union(fx_rectangle_type, fx_point, fx_shape_type):
     assert meta_from_shape == meta
 
 
-def test_deserialize_meta_boxed(fx_boxed_type, fx_record_type, fx_point):
+def test_deserialize_meta_boxed(fx_boxed_type, fx_record_type, fx_point,
+                                fx_token_type):
     v = 3.14
     meta = deserialize_meta(fx_boxed_type, v)
     boxed = fx_boxed_type(v)
+    assert meta == boxed
+    v = uuid.uuid4()
+    meta = deserialize_meta(fx_token_type, str(v))
+    boxed = fx_token_type(v)
     assert meta == boxed
 
 
@@ -104,7 +112,7 @@ def test_deserialize_multiple_boxed_type(fx_layered_boxed_types):
     A, B, C = fx_layered_boxed_types
     assert B.__nirum_deserialize__('lorem') == B(A('lorem'))
     assert C.__nirum_deserialize__('x') == C(B(A('x')))
-    with raises(TypeError):
+    with raises(ValueError):
         B.__nirum_deserialize__(1)
 
 
