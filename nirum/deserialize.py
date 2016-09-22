@@ -54,11 +54,18 @@ def deserialize_iterable_abstract_type(cls, cls_origin_type, data):
     }
     deserialized_data = data
     cls_primitive_type = abstract_type_map[cls_origin_type]
-    if isinstance(cls.__args__[0], typing.TypeVar):
+    # Whereas on Python/typing < 3.5.2 type parameters are stored in
+    # __parameters__ attribute, on Python/typing >= 3.5.2 __parameters__
+    # attribute is gone and __args__ comes instead.
+    type_params = (cls.__args__
+                   if hasattr(cls, '__args__')
+                   else cls.__parameters__)
+    elem_type = type_params[0]
+    if isinstance(elem_type, typing.TypeVar):
         deserialized_data = cls_primitive_type(data)
     else:
         deserialized_data = cls_primitive_type(
-            deserialize_meta(cls.__args__[0], d) for d in data
+            deserialize_meta(elem_type, d) for d in data
         )
     return deserialized_data
 
