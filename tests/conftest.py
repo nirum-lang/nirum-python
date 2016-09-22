@@ -35,7 +35,7 @@ class Token:
     ) -> 'Token':
         return deserialize_boxed_type(cls, value)
 
-    def __hash__(self) -> int: # noqa
+    def __hash__(self) -> int:  # noqa
         return hash((self.__class__, self.value))
 
 
@@ -62,7 +62,7 @@ class Offset:
     ) -> 'Offset':
         return deserialize_boxed_type(cls, value)
 
-    def __hash__(self) -> int: # noqa
+    def __hash__(self) -> int:  # noqa
         return hash((self.__class__, self.value))
 
 
