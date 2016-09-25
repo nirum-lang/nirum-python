@@ -5,19 +5,19 @@ import uuid
 
 from pytest import fixture
 
-from nirum.serialize import serialize_record_type, serialize_boxed_type
-from nirum.deserialize import deserialize_record_type, deserialize_boxed_type
-from nirum.validate import (validate_boxed_type, validate_record_type,
+from nirum.serialize import serialize_record_type, serialize_unboxed_type
+from nirum.deserialize import deserialize_record_type, deserialize_unboxed_type
+from nirum.validate import (validate_unboxed_type, validate_record_type,
                             validate_union_type)
 from nirum.constructs import NameDict, name_dict_type
 
 
 class Token:
 
-    __nirum_boxed_type__ = uuid.UUID
+    __nirum_inner_type__ = uuid.UUID
 
     def __init__(self, value: uuid.UUID) -> None:
-        validate_boxed_type(value, uuid.UUID)
+        validate_unboxed_type(value, uuid.UUID)
         self.value = value
 
     def __eq__(self, other) -> bool:
@@ -27,13 +27,13 @@ class Token:
         return hash(self.value)
 
     def __nirum_serialize__(self) -> typing.Mapping[str, typing.Any]:
-        return serialize_boxed_type(self)
+        return serialize_unboxed_type(self)
 
     @classmethod
     def __nirum_deserialize__(
         cls: type, value: typing.Mapping[str, typing.Any]
     ) -> 'Token':
-        return deserialize_boxed_type(cls, value)
+        return deserialize_unboxed_type(cls, value)
 
     def __hash__(self) -> int:  # noqa
         return hash((self.__class__, self.value))
@@ -41,10 +41,10 @@ class Token:
 
 class Offset:
 
-    __nirum_boxed_type__ = float
+    __nirum_inner_type__ = float
 
     def __init__(self, value: float) -> None:
-        validate_boxed_type(value, float)
+        validate_unboxed_type(value, float)
         self.value = value
 
     def __eq__(self, other) -> bool:
@@ -54,13 +54,13 @@ class Offset:
         return hash(self.value)
 
     def __nirum_serialize__(self) -> typing.Mapping[str, typing.Any]:
-        return serialize_boxed_type(self)
+        return serialize_unboxed_type(self)
 
     @classmethod
     def __nirum_deserialize__(
         cls: type, value: typing.Mapping[str, typing.Any]
     ) -> 'Offset':
-        return deserialize_boxed_type(cls, value)
+        return deserialize_unboxed_type(cls, value)
 
     def __hash__(self) -> int:  # noqa
         return hash((self.__class__, self.value))
@@ -250,13 +250,13 @@ class Location:
 
 
 @fixture
-def fx_boxed_type():
+def fx_unboxed_type():
     return Offset
 
 
 @fixture
-def fx_offset(fx_boxed_type):
-    return fx_boxed_type(1.2)
+def fx_offset(fx_unboxed_type):
+    return fx_unboxed_type(1.2)
 
 
 @fixture
@@ -265,8 +265,8 @@ def fx_record_type():
 
 
 @fixture
-def fx_point(fx_record_type, fx_boxed_type):
-    return fx_record_type(fx_boxed_type(3.14), fx_boxed_type(1.592))
+def fx_point(fx_record_type, fx_unboxed_type):
+    return fx_record_type(fx_unboxed_type(3.14), fx_unboxed_type(1.592))
 
 
 @fixture
@@ -286,10 +286,10 @@ def fx_rectangle(fx_rectangle_type, fx_point):
 
 class A:
 
-    __nirum_boxed_type__ = str
+    __nirum_inner_type__ = str
 
     def __init__(self, value: str) -> None:
-        validate_boxed_type(value, str)
+        validate_unboxed_type(value, str)
         self.value = value  # type: Text
 
     def __eq__(self, other) -> bool:
@@ -300,13 +300,13 @@ class A:
         return hash(self.value)
 
     def __nirum_serialize__(self) -> str:
-        return serialize_boxed_type(self)
+        return serialize_unboxed_type(self)
 
     @classmethod
     def __nirum_deserialize__(
         cls: type, value: typing.Mapping[str, typing.Any]
     ) -> 'A':
-        return deserialize_boxed_type(cls, value)
+        return deserialize_unboxed_type(cls, value)
 
     def __repr__(self) -> str:
         return '{0.__module__}.{0.__qualname__}({1!r})'.format(
@@ -316,10 +316,10 @@ class A:
 
 class B:
 
-    __nirum_boxed_type__ = A
+    __nirum_inner_type__ = A
 
     def __init__(self, value: A) -> None:
-        validate_boxed_type(value, A)
+        validate_unboxed_type(value, A)
         self.value = value  # type: A
 
     def __eq__(self, other) -> bool:
@@ -330,13 +330,13 @@ class B:
         return hash(self.value)
 
     def __nirum_serialize__(self) -> str:
-        return serialize_boxed_type(self)
+        return serialize_unboxed_type(self)
 
     @classmethod
     def __nirum_deserialize__(
         cls: type, value: typing.Mapping[str, typing.Any]
     ) -> 'B':
-        return deserialize_boxed_type(cls, value)
+        return deserialize_unboxed_type(cls, value)
 
     def __repr__(self) -> str:
         return '{0.__module__}.{0.__qualname__}({1!r})'.format(
@@ -346,10 +346,10 @@ class B:
 
 class C:
 
-    __nirum_boxed_type__ = B
+    __nirum_inner_type__ = B
 
     def __init__(self, value: B) -> None:
-        validate_boxed_type(value, B)
+        validate_unboxed_type(value, B)
         self.value = value  # type: B
 
     def __eq__(self, other) -> bool:
@@ -360,13 +360,13 @@ class C:
         return hash(self.value)
 
     def __nirum_serialize__(self) -> str:
-        return serialize_boxed_type(self)
+        return serialize_unboxed_type(self)
 
     @classmethod
     def __nirum_deserialize__(
         cls: type, value: typing.Mapping[str, typing.Any]
     ) -> 'C':
-        return deserialize_boxed_type(cls, value)
+        return deserialize_unboxed_type(cls, value)
 
     def __repr__(self) -> str:
         return '{0.__module__}.{0.__qualname__}({1!r})'.format(
@@ -375,7 +375,7 @@ class C:
 
 
 @fixture
-def fx_layered_boxed_types():
+def fx_layered_unboxed_types():
     return A, B, C
 
 

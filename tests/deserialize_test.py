@@ -6,29 +6,29 @@ import typing
 from pytest import raises, mark
 
 from nirum.serialize import serialize_record_type
-from nirum.deserialize import (deserialize_boxed_type, deserialize_meta,
+from nirum.deserialize import (deserialize_unboxed_type, deserialize_meta,
                                deserialize_tuple_type,
                                deserialize_record_type, deserialize_union_type,
                                deserialize_optional, deserialize_primitive)
 
 
-def test_deserialize_boxed_type(fx_boxed_type, fx_token_type):
+def test_deserialize_unboxed_type(fx_unboxed_type, fx_token_type):
     v = 3.14
-    assert fx_boxed_type(v) == deserialize_boxed_type(fx_boxed_type, v)
+    assert fx_unboxed_type(v) == deserialize_unboxed_type(fx_unboxed_type, v)
     uuid_ = uuid.uuid4()
     t = str(uuid_)
-    assert fx_token_type(uuid_) == deserialize_boxed_type(fx_token_type, t)
+    assert fx_token_type(uuid_) == deserialize_unboxed_type(fx_token_type, t)
 
 
-def test_deserialize_record_type(fx_boxed_type, fx_record_type):
+def test_deserialize_record_type(fx_unboxed_type, fx_record_type):
     with raises(ValueError):
         deserialize_record_type(fx_record_type, {})
 
     with raises(ValueError):
         deserialize_record_type(fx_record_type, {'_type': 'hello'})
 
-    left = fx_boxed_type(1.1)
-    top = fx_boxed_type(2.2)
+    left = fx_unboxed_type(1.1)
+    top = fx_unboxed_type(2.2)
     deserialized = deserialize_record_type(
         fx_record_type, {'_type': 'point', 'x': left.value, 'top': top.value}
     )
@@ -72,9 +72,9 @@ def test_deserialize_meta_error():
         deserialize_meta(None, {})
 
 
-def test_deserialize_meta_record(fx_boxed_type, fx_record_type, fx_point):
-    left = fx_boxed_type(1.1)
-    top = fx_boxed_type(2.2)
+def test_deserialize_meta_record(fx_unboxed_type, fx_record_type, fx_point):
+    left = fx_unboxed_type(1.1)
+    top = fx_unboxed_type(2.2)
     d = {'_type': 'point', 'x': left.value, 'top': top.value}
     meta = deserialize_meta(fx_record_type, d)
     record = deserialize_record_type(fx_record_type, d)
@@ -96,20 +96,20 @@ def test_deserialize_meta_union(fx_rectangle_type, fx_point, fx_shape_type):
     assert meta_from_shape == meta
 
 
-def test_deserialize_meta_boxed(fx_boxed_type, fx_record_type, fx_point,
-                                fx_token_type):
+def test_deserialize_meta_unboxed(fx_unboxed_type, fx_record_type, fx_point,
+                                  fx_token_type):
     v = 3.14
-    meta = deserialize_meta(fx_boxed_type, v)
-    boxed = fx_boxed_type(v)
-    assert meta == boxed
+    meta = deserialize_meta(fx_unboxed_type, v)
+    unboxed = fx_unboxed_type(v)
+    assert meta == unboxed
     v = uuid.uuid4()
     meta = deserialize_meta(fx_token_type, str(v))
-    boxed = fx_token_type(v)
-    assert meta == boxed
+    unboxed = fx_token_type(v)
+    assert meta == unboxed
 
 
-def test_deserialize_multiple_boxed_type(fx_layered_boxed_types):
-    A, B, C = fx_layered_boxed_types
+def test_deserialize_multiple_unboxed_type(fx_layered_unboxed_types):
+    A, B, C = fx_layered_unboxed_types
     assert B.__nirum_deserialize__('lorem') == B(A('lorem'))
     assert C.__nirum_deserialize__('x') == C(B(A('x')))
     with raises(ValueError):

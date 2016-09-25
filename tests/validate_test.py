@@ -2,14 +2,14 @@ import decimal
 
 from pytest import raises
 
-from nirum.validate import (validate_boxed_type, validate_record_type,
+from nirum.validate import (validate_unboxed_type, validate_record_type,
                             validate_union_type)
 
 
-def test_validate_boxed_type():
-    assert validate_boxed_type(3.14, float)
+def test_validate_unboxed_type():
+    assert validate_unboxed_type(3.14, float)
     with raises(TypeError):
-        validate_boxed_type('hello', float)
+        validate_unboxed_type('hello', float)
 
 
 def test_validate_record_type(fx_point, fx_record_type, fx_offset,
@@ -37,16 +37,16 @@ def test_validate_union_type(fx_rectangle, fx_rectangle_type, fx_point):
         validate_union_type(fx_rectangle_type(1, 1))
 
 
-def test_validate_layered_boxed_types(fx_layered_boxed_types):
-    A, B, C = fx_layered_boxed_types
-    assert validate_boxed_type('test', str)
-    assert validate_boxed_type(A('test'), A)
-    assert validate_boxed_type(B(A('test')), B)
+def test_validate_layered_unboxed_types(fx_layered_unboxed_types):
+    A, B, C = fx_layered_unboxed_types
+    assert validate_unboxed_type('test', str)
+    assert validate_unboxed_type(A('test'), A)
+    assert validate_unboxed_type(B(A('test')), B)
     with raises(TypeError):
-        assert validate_boxed_type('test', A)
+        assert validate_unboxed_type('test', A)
 
     with raises(TypeError):
-        assert validate_boxed_type('test', B)
+        assert validate_unboxed_type('test', B)
 
     with raises(TypeError):
-        assert validate_boxed_type(A('test'), B)
+        assert validate_unboxed_type(A('test'), B)

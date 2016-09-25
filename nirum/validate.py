@@ -6,7 +6,7 @@ import typing
 
 __all__ = (
     'validate_boxed_type', 'validate_record_type', 'validate_type',
-    'validate_union_type',
+    'validate_unboxed_type', 'validate_union_type',
 )
 
 
@@ -24,11 +24,16 @@ def validate_type(data, type_):
     return instance_check
 
 
-def validate_boxed_type(boxed, type_hint):
-    if not isinstance(boxed, type_hint):
+def validate_unboxed_type(unboxed, type_hint):
+    if not isinstance(unboxed, type_hint):
         raise TypeError('{0} expected, found: {1}'.format(type_hint,
-                                                          type(boxed)))
-    return boxed
+                                                          type(unboxed)))
+    return unboxed
+
+
+validate_boxed_type = validate_unboxed_type
+# FIXME: validate_boxed_type() is for backward compatibility;
+#        remove it in the near future
 
 
 def validate_record_type(record):

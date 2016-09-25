@@ -8,17 +8,23 @@ import uuid
 
 __all__ = (
     'serialize_boxed_type', 'serialize_meta',
-    'serialize_record_type', 'serialize_union_type',
+    'serialize_record_type', 'serialize_unboxed_type',
+    'serialize_union_type',
 )
 
 
-def serialize_boxed_type(data):
+def serialize_unboxed_type(data):
     value = data.value
     serialize = getattr(value, '__nirum_serialize__', None)
     if callable(serialize):
         return serialize()
     else:
         return serialize_meta(value)
+
+
+serialize_boxed_type = serialize_unboxed_type
+# FIXME: serialize_boxed_type() is for backward compatibility;
+#        remove it in the near future
 
 
 def serialize_type_with_names(data, names):

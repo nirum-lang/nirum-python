@@ -19,6 +19,7 @@ __all__ = (
     'deserialize_primitive',
     'deserialize_record_type',
     'deserialize_tuple_type',
+    'deserialize_unboxed_type',
     'deserialize_union_type',
     'is_support_abstract_type',
 )
@@ -158,8 +159,11 @@ def deserialize_meta(cls, data):
         d = deserialize_union_type(cls, data)
     elif hasattr(cls, '__nirum_record_behind_name__'):
         d = deserialize_record_type(cls, data)
-    elif hasattr(cls, '__nirum_boxed_type__'):
-        d = deserialize_boxed_type(cls, data)
+    elif (hasattr(cls, '__nirum_inner_type__') or
+          hasattr(cls, '__nirum_boxed_type__')):
+        # FIXME: __nirum_boxed_type__ is for backward compatibility;
+        #        remove __nirum_boxed_type__ in the near future
+        d = deserialize_unboxed_type(cls, data)
     elif type(cls) is typing.TupleMeta:
         # typing.Tuple dosen't have either `__origin__` and `__args__`
         # so it have to be handled special case.
@@ -179,14 +183,24 @@ def deserialize_meta(cls, data):
     return d
 
 
-def deserialize_boxed_type(cls, value):
-    deserializer = getattr(cls.__nirum_boxed_type__,
-                           '__nirum_deserialize__', None)
+def deserialize_unboxed_type(cls, value):
+    try:
+        inner_type = cls.__nirum_inner_type__
+    except AttributeError:
+        # FIXME: __nirum_boxed_type__ is for backward compatibility;
+        #        remove __nirum_boxed_type__ in the near future
+        inner_type = cls.__nirum_boxed_type__
+    deserializer = getattr(inner_type, '__nirum_deserialize__', None)
     if deserializer:
         value = deserializer(value)
     else:
-        value = deserialize_meta(cls.__nirum_boxed_type__, value)
+        value = deserialize_meta(inner_type, value)
     return cls(value=value)
+
+
+deserialize_boxed_type = deserialize_unboxed_type
+# FIXME: deserialize_boxed_type() is for backward compatibility;
+#        remove it in the near future
 
 
 def deserialize_record_type(cls, value):
