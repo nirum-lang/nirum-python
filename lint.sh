@@ -2,4 +2,7 @@
 set -e
 
 flake8 .
-import-order nirum ./nirum
+
+if [[ "$(python -c "import sys;print(sys.version[0])")" != "2" ]]; then
+  import-order nirum ./nirum
+fi

@@ -1,9 +1,7 @@
-import http.client
 import socket
-import typing
-import urllib.parse
-import urllib.request
 
+from six.moves import urllib
+from six.moves.http_client import HTTPResponse
 from werkzeug.test import Client
 from werkzeug.wrappers import Response
 
@@ -13,13 +11,13 @@ from .rpc import WsgiApp
 __all__ = 'MockHttpResponse', 'MockOpener'
 
 
-class MockHttpResponse(http.client.HTTPResponse):
+class MockHttpResponse(HTTPResponse):
 
-    def __init__(self, body: str, status_code: int):
+    def __init__(self, body, status_code):
         self.body = body
         self.status = status_code
 
-    def read(self) -> bytes:
+    def read(self):
         return self.body.encode('utf-8')
 
 
@@ -33,17 +31,12 @@ class MockOpener(urllib.request.OpenerDirector):
         )
         self.wsgi_test_client = Client(self.wsgi_app, Response)
 
-    def open(
-        self,
-        fullurl: typing.Union[str, urllib.request.Request],
-        data: typing.Optional[bytes]=None,
-        timeout: int=socket._GLOBAL_DEFAULT_TIMEOUT
-    ) -> MockHttpResponse:
+    def open(self, fullurl, data, timeout=socket._GLOBAL_DEFAULT_TIMEOUT):
         if isinstance(fullurl, str):
             req = urllib.request.Request(fullurl, data=data)
         else:
             req = fullurl
-        scheme, host, path, qs, _ = urllib.parse.urlsplit(req.full_url)
+        scheme, host, path, qs, _ = urllib.parse.urlsplit(req.get_full_url())
         assert self.scheme == scheme
         assert self.host == host
         assert self.path == path

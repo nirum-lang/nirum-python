@@ -4,9 +4,8 @@
 """
 import json
 import typing
-import urllib.parse
-import urllib.request
 
+from six.moves import urllib
 from werkzeug.exceptions import HTTPException
 from werkzeug.http import HTTP_STATUS_CODES
 from werkzeug.routing import Map, Rule
@@ -42,14 +41,14 @@ class Service:
                 method = getattr(self, method_name)
             except AttributeError:
                 raise InvalidNirumServiceMethodNameError(
-                    "{0.__class__.__qualname__}.{1} inexist.".format(
-                        self, method_name
+                    "{0}.{1} inexist.".format(
+                        typing._type_repr(self.__class__), method_name
                     )
                 )
             if not callable(method):
                 raise InvalidNirumServiceMethodTypeError(
-                    "{0.__class__.__qualname__}.{1} isn't callable".format(
-                        self, method_name
+                    "{0}.{1} isn't callable".format(
+                        typing._type_repr(self.__class__), method_name
                     )
                 )
 
@@ -67,11 +66,10 @@ class WsgiApp:
         Rule('/ping/', endpoint='ping'),
     ])
 
-    def __init__(self, service: Service):
+    def __init__(self, service):
         self.service = service
 
-    def __call__(self, environ: typing.Mapping[str, object],
-                 start_response: typing.Callable) -> WsgiResponse:
+    def __call__(self, environ, start_response):
         """
 
         :param environ:
@@ -80,8 +78,7 @@ class WsgiApp:
         """
         return self.route(environ, start_response)
 
-    def route(self, environ: typing.Mapping[str, object],
-              start_response: typing.Callable) -> WsgiResponse:
+    def route(self, environ, start_response):
         """Route
 
         :param environ:
@@ -99,14 +96,14 @@ class WsgiApp:
             response = procedure(request, args)
             return response(environ, start_response)
 
-    def ping(self, request: WsgiRequest, args: typing.Any) -> WsgiResponse:
+    def ping(self, request, args):
         return WsgiResponse(
             '"Ok"',
             200,
             content_type='application/json'
         )
 
-    def rpc(self, request: WsgiRequest, args: typing.Any) -> WsgiResponse:
+    def rpc(self, request, args):
         """RPC
 
         :param request:
@@ -145,8 +142,7 @@ class WsgiApp:
             )
         if not callable(service_method):
             return self.error(
-                400,
-                request,
+                400, request,
                 message="Remote procedure '{}' is not callable.".format(
                     request_method
                 )
@@ -173,19 +169,17 @@ class WsgiApp:
             return self.error(
                 400,
                 request,
-                message="Incorrect return type '{0.__class__.__qualname__}' "
-                        "for '{1}'. expected '{2.__qualname__}'.".format(
-                            result, request_method, type_hints['_return']
+                message="Incorrect return type '{0}' "
+                        "for '{1}'. expected '{2}'.".format(
+                            typing._type_repr(result.__class__),
+                            request_method,
+                            typing._type_repr(type_hints['_return'])
                         )
             )
         else:
             return self._json_response(200, serialize_meta(result))
 
-    def _parse_procedure_arguments(
-        self,
-        type_hints: typing.Mapping[str, typing.Union[type, NameDict]],
-        request_json: JSONType
-    ) -> typing.Mapping[str, typing.Union[str, float, int, bool, object]]:
+    def _parse_procedure_arguments(self, type_hints, request_json):
         arguments = {}
         name_map = type_hints['_names']
         for argument_name, type_ in type_hints.items():
@@ -204,17 +198,15 @@ class WsgiApp:
                 arguments[argument_name] = deserialize_meta(type_, data)
             except ValueError:
                 raise NirumProcedureArgumentValueError(
-                    "Incorrect type '{0.__class__.__name__}' for '{1}'. "
-                    "expected '{2.__name__}'.".format(
-                        data, behind_name, type_
+                    "Incorrect type '{0}' for '{1}'. "
+                    "expected '{2}'.".format(
+                        typing._type_repr(data.__class__), behind_name,
+                        typing._type_repr(type_)
                     )
                 )
         return arguments
 
-    def _check_return_type(
-        self,
-        type_hint: type, procedure_result: typing.Any
-    ) -> bool:
+    def _check_return_type(self, type_hint, procedure_result):
         try:
             deserialize_meta(type_hint, serialize_meta(procedure_result))
         except ValueError:
@@ -222,9 +214,7 @@ class WsgiApp:
         else:
             return True
 
-    def _make_error_response(
-        self, error_type: str, message: typing.Optional[str]=None
-    ) -> typing.Mapping[str, str]:
+    def _make_error_response(self, error_type, message=None):
         """Create error response json temporary.
 
         .. code-block:: nirum
@@ -242,10 +232,7 @@ class WsgiApp:
             'message': message,
         }
 
-    def error(
-        self, status_code: int, request: WsgiRequest,
-        *, message: typing.Optional[str]=None
-    ) -> WsgiResponse:
+    def error(self, status_code, request, message=None):
         """Handle error response.
 
         :param int status_code:
@@ -278,9 +265,7 @@ class WsgiApp:
             )
         )
 
-    def _json_response(
-        self, status_code: int, response_json: JSONType, **kwargs
-    ) -> WsgiResponse:
+    def _json_response(self, status_code, response_json, **kwargs):
         return WsgiResponse(
             json.dumps(response_json),
             status_code,
@@ -291,10 +276,7 @@ class WsgiApp:
 
 class Client:
 
-    def __init__(
-        self, url: str,
-        opener: urllib.request.OpenerDirector=urllib.request.build_opener()
-    ):
+    def __init__(self, url, opener=urllib.request.build_opener()):
         self.url = url_endswith_slash(url)
         self.opener = opener
 
@@ -306,9 +288,7 @@ class Client:
         )
         return self.make_request(req)
 
-    def remote_call(self,
-                    method_name: str,
-                    payload: JSONType={}) -> JSONType:
+    def remote_call(self, method_name, payload={}):
         qs = urllib.parse.urlencode({'method': method_name})
         scheme, netloc, path, _, _ = urllib.parse.urlsplit(self.url)
         request_url = urllib.parse.urlunsplit((
@@ -321,9 +301,9 @@ class Client:
         )
         return self.make_request(req)
 
-    def make_request(self, request: urllib.request.Request) -> JSONType:
+    def make_request(self, request):
         try:
-            response = self.opener.open(request)
+            response = self.opener.open(request, None)
         except urllib.error.URLError as e:
             raise NirumUrlError(e)
         except urllib.error.HTTPError as e:

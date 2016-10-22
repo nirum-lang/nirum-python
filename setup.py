@@ -30,12 +30,13 @@ service_requires = [
     'Werkzeug >= 0.11, < 0.12',
 ]
 install_requires = [
-    'iso8601',
+    'six', 'iso8601',
 ] + service_requires
 tests_require = [
     'pytest >= 2.9.0',
     'import-order',
     'flake8',
+    'tox',
 ]
 docs_require = [
     'Sphinx',
@@ -48,6 +49,9 @@ extras_require = {
 below35_requires = [
     'typing',
 ]
+below34_requires = [
+    'enum34',
+]
 
 
 if 'bdist_wheel' not in sys.argv and sys.version_info < (3, 5):
@@ -57,8 +61,11 @@ if 'bdist_wheel' not in sys.argv and sys.version_info < (3, 5):
 if tuple(map(int, setuptools_version.split('.'))) < (17, 1):
     setup_requires = ['setuptools >= 17.1']
     extras_require.update({":python_version=='3.4'": below35_requires})
+    extras_require.update({":python_version=='2.7'": below35_requires})
+    extras_require.update({":python_version=='2.7'": below34_requires})
 else:
     extras_require.update({":python_version<'3.5'": below35_requires})
+    extras_require.update({":python_version<'3.4'": below34_requires})
 
 
 setup(

@@ -4,6 +4,7 @@ import uuid
 
 from pytest import mark
 
+from nirum._compat import utc
 from nirum.serialize import (serialize_unboxed_type, serialize_record_type,
                              serialize_meta, serialize_union_type)
 
@@ -14,9 +15,9 @@ def test_serialize_unboxed_type(fx_offset, fx_token_type):
     assert serialize_unboxed_type(fx_token_type(token)) == str(token)
 
 
-def test_serialize_layered_unboxed_type(fx_layered_unboxed_types):
-    actual = fx_layered_unboxed_types[1](fx_layered_unboxed_types[0]('test'))
-    assert actual.__nirum_serialize__() == 'test'
+def test_serialize_layered_boxed_type(fx_layered_boxed_types):
+    actual = fx_layered_boxed_types[1](fx_layered_boxed_types[0](u'test'))
+    assert actual.__nirum_serialize__() == u'test'
 
 
 def test_serialize_record_type(fx_point):
@@ -42,10 +43,10 @@ def test_serialize_union_type(fx_point, fx_offset, fx_circle_type,
     assert serialize_union_type(rectangle) == s
 
 
-def test_multiple_unboxed_type(fx_layered_unboxed_types):
-    A, B, _ = fx_layered_unboxed_types
-    assert B(A('hello')).value.value == 'hello'
-    assert B(A('lorem')).__nirum_serialize__() == 'lorem'
+def test_multiple_boxed_type(fx_layered_boxed_types):
+    A, B, _ = fx_layered_boxed_types
+    assert B(A(u'hello')).value.value == u'hello'
+    assert B(A(u'lorem')).__nirum_serialize__() == u'lorem'
 
 
 @mark.parametrize(
@@ -61,7 +62,7 @@ def test_multiple_unboxed_type(fx_layered_unboxed_types):
         (decimal.Decimal('3.14'), '3.14'),
         (
             datetime.datetime(2016, 8, 5, 3, 46, 37,
-                              tzinfo=datetime.timezone.utc),
+                              tzinfo=utc),
             '2016-08-05T03:46:37+00:00'
         ),
         (

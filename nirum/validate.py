@@ -41,8 +41,9 @@ def validate_record_type(record):
         data = getattr(record, attr)
         if not validate_type(data, type_):
             raise TypeError(
-                'expect {0.__class__.__name__}.{1} to be {2}'
-                ', but found: {3}'.format(record, attr, type_, type(data))
+                'expect {0}.{1} to be {2}'
+                ', but found: {3}'.format(typing._type_repr(record.__class__),
+                                          attr, type_, type(data))
             )
     else:
         return record
@@ -53,8 +54,9 @@ def validate_union_type(union):
         data = getattr(union, attr)
         if not validate_type(data, type_):
             raise TypeError(
-                'expect {0.__class__.__name__}.{1} to be {2}'
-                ', but found: {3}'.format(union, attr, type_, type(data))
+                'expect {0}.{1} to be {2}'
+                ', but found: {3}'.format(typing._type_repr(union.__class__),
+                                          attr, type_, type(data))
             )
     else:
         return union

@@ -2,7 +2,7 @@
 ~~~~~~~~~~~~~~~~~~
 
 """
-import urllib.error
+from six.moves import urllib
 
 __all__ = (
     'InvalidNirumServiceMethodNameError',
@@ -48,7 +48,7 @@ class NirumHttpError(urllib.error.HTTPError, NirumServiceError):
 class NirumUrlError(urllib.error.URLError, NirumServiceError):
     """TODO"""
 
-    def __init__(self, exc: urllib.error.URLError):
+    def __init__(self, exc):
         self.text = exc.read()
         super().__init__(exc.reason)
 

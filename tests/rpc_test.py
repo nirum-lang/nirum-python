@@ -1,124 +1,51 @@
 import json
-import typing
 
 from pytest import fixture, raises, mark
+from six import text_type
 from werkzeug.test import Client as TestClient
 from werkzeug.wrappers import Response
 
-from nirum.constructs import NameDict
 from nirum.exc import (InvalidNirumServiceMethodTypeError,
                        InvalidNirumServiceMethodNameError)
-from nirum.deserialize import deserialize_meta
-from nirum.serialize import serialize_meta
-from nirum.rpc import Client, Service, WsgiApp
+from nirum.rpc import Client, WsgiApp
 from nirum.test import MockOpener
 
-
-class MusicService(Service):
-
-    __nirum_service_methods__ = {
-        'get_music_by_artist_name': {
-            'artist_name': str,
-            '_return': typing.Sequence[str],
-            '_names': NameDict([
-                ('artist_name', 'artist_name')
-            ])
-        },
-        'incorrect_return': {
-            '_return': str,
-            '_names': NameDict([])
-        },
-        'get_artist_by_music': {
-            'music': str,
-            '_return': str,
-            '_names': NameDict([('music', 'norae')])
-        }
-    }
-    __nirum_method_names__ = NameDict([
-        ('get_music_by_artist_name', 'get_music_by_artist_name'),
-        ('incorrect_return', 'incorrect_return'),
-        ('get_artist_by_music', 'find_artist'),
-    ])
-
-    def get_music_by_artist_name(
-        self,
-        artist_name: str
-    ) -> typing.Sequence[str]:
-        raise NotImplementedError('get_music_by_artist_name')
-
-    def incorrect_return(self) -> str:
-        raise NotImplementedError('incorrect_return')
-
-    def get_artist_by_music(self, music: str) -> str:
-        raise NotImplementedError('get_artist_by_music')
+from .nirum_schema import import_nirum_fixture
 
 
-class MusicServiceImpl(MusicService):
+nf = import_nirum_fixture()
+
+
+class MusicServiceImpl(nf.MusicService):
 
     music_map = {
-        'damien rice': ['9 crimes', 'Elephant'],
-        'ed sheeran': ['Thinking out loud', 'Photograph'],
+        u'damien rice': [u'9 crimes', u'Elephant'],
+        u'ed sheeran': [u'Thinking out loud', u'Photograph'],
     }
 
-    def get_music_by_artist_name(
-        self,
-        artist_name: str
-    ) -> typing.Sequence[str]:
+    def get_music_by_artist_name(self, artist_name):
         return self.music_map.get(artist_name)
 
-    def incorrect_return(self) -> str:
+    def incorrect_return(self):
         return 1
 
-    def get_artist_by_music(self, music: str) -> str:
+    def get_artist_by_music(self, music):
         for k, v in self.music_map.items():
             if music in v:
                 return k
-        return 'none'
+        return u'none'
 
 
-class MusicServiceNameErrorImpl(MusicService):
+class MusicServiceNameErrorImpl(nf.MusicService):
 
     __nirum_service_methods__ = {
         'foo': {}
     }
 
 
-class MusicServiceTypeErrorImpl(MusicService):
+class MusicServiceTypeErrorImpl(nf.MusicService):
 
     get_music_by_artist_name = 1
-
-
-class MusicServiceClient(Client, MusicService):
-
-    def get_music_by_artist_name(
-        self, artist_name: str
-    ) -> typing.Sequence[str]:
-        meta = self.__nirum_service_methods__['get_music_by_artist_name']
-        payload = {meta['_names']['artist_name']: serialize_meta(artist_name)}
-        return deserialize_meta(
-            meta['_return'],
-            json.loads(
-                self.remote_call(
-                    self.__nirum_method_names__['get_music_by_artist_name'],
-                    payload=payload
-                )
-            )
-        )
-
-    def get_artist_by_music(
-        self, music: str
-    ) -> typing.Sequence[str]:
-        meta = self.__nirum_service_methods__['get_artist_by_music']
-        payload = {meta['_names']['music']: serialize_meta(music)}
-        return deserialize_meta(
-            meta['_return'],
-            json.loads(
-                self.remote_call(
-                    self.__nirum_method_names__['get_artist_by_music'],
-                    payload=payload
-                )
-            )
-        )
 
 
 @mark.parametrize('impl, error_class', [
@@ -148,7 +75,7 @@ def test_wsgi_app_ping(fx_music_wsgi, fx_test_client):
 
 
 def assert_response(response, status_code, expect_json):
-    assert response.status_code == status_code
+    assert response.status_code == status_code, response.get_data(as_text=True)
     actual_response_json = json.loads(
         response.get_data(as_text=True)
     )
@@ -211,7 +138,7 @@ def test_wsgi_app_error(fx_test_client):
             '_type': 'error',
             '_tag': 'bad_request',
             'message': "Incorrect return type 'int' for 'incorrect_return'. "
-                       "expected 'str'."
+                       "expected '{}'.".format(text_type.__name__)
         }
     )
 
@@ -241,7 +168,7 @@ def test_procedure_bad_request(fx_test_client):
             '_type': 'error',
             '_tag': 'bad_request',
             'message': "Incorrect type 'int' for 'artist_name'. "
-                       "expected 'str'."
+                       "expected '{}'.".format(text_type.__name__)
         }
     )
 
@@ -249,8 +176,11 @@ def test_procedure_bad_request(fx_test_client):
 @mark.parametrize(
     'payload, expected_json',
     [
-        ({'artist_name': 'damien rice'}, ['9 crimes', 'Elephant']),
-        ({'artist_name': 'ed sheeran'}, ['Thinking out loud', 'Photograph']),
+        ({'artist_name': u'damien rice'}, [u'9 crimes', u'Elephant']),
+        (
+            {'artist_name': u'ed sheeran'},
+            [u'Thinking out loud', u'Photograph']
+        ),
     ]
 )
 def test_wsgi_app_method(fx_test_client, payload, expected_json):
@@ -275,7 +205,7 @@ def test_wsgi_app_http_error(fx_test_client):
 
 
 def test_wsgi_app_with_behind_name(fx_test_client):
-    payload = {'norae': '9 crimes'}
+    payload = {'norae': u'9 crimes'}
     assert_response(
         fx_test_client.post(
             '/?method=get_artist_by_music',
@@ -312,7 +242,7 @@ def test_wsgi_app_with_behind_name(fx_test_client):
             content_type='application/json'
         ),
         200,
-        'damien rice'
+        u'damien rice'
     )
 
 
@@ -334,7 +264,7 @@ def test_rpc_client_error(url):
 
 def test_rpc_client_service(monkeypatch):
     url = 'http://foobar.com/'
-    client = MusicServiceClient(url, MockOpener(url, MusicServiceImpl))
+    client = nf.MusicServiceClient(url, MockOpener(url, MusicServiceImpl))
     nine_crimes = '9 crimes'
     damien_music = [nine_crimes, 'Elephant']
     damien_rice = 'damien rice'
