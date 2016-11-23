@@ -1,10 +1,11 @@
 import datetime
 import decimal
+import numbers
 import uuid
 import typing
 
 from pytest import raises, mark
-from six import text_type
+from six import PY3, text_type
 
 from nirum._compat import utc
 from nirum.serialize import serialize_record_type
@@ -121,7 +122,7 @@ def test_deserialize_multiple_boxed_type(fx_layered_boxed_types):
 @mark.parametrize(
     'data, t, expect',
     [
-        (1, int, 1),
+        (1, int if PY3 else numbers.Integral, 1),
         (1.1, float, 1.1),
         (u'hello', text_type, 'hello'),
         (True, bool, True),
