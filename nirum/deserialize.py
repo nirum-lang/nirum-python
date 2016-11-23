@@ -5,6 +5,7 @@
 import datetime
 import decimal
 import enum
+import numbers
 import typing
 import uuid
 
@@ -26,7 +27,7 @@ __all__ = (
 )
 _NIRUM_PRIMITIVE_TYPE = {
     float, decimal.Decimal, uuid.UUID, datetime.datetime,
-    datetime.date, bool, int, text_type
+    datetime.date, bool, int, text_type, numbers.Integral
 }
 
 
@@ -122,6 +123,8 @@ def deserialize_primitive(cls, data):
             raise ValueError("'{}' is not a date.".format(data))
     elif cls in {int, float, uuid.UUID, bool}:
         d = cls(data)
+    elif cls is numbers.Integral:
+        d = data
     elif cls is decimal.Decimal:
         try:
             d = cls(data)
