@@ -2,9 +2,11 @@
 ~~~~~~~~~~~~~~~~~~~
 
 """
+import collections
 import json
 import typing
 
+from six import integer_types, text_type
 from six.moves import urllib
 from werkzeug.exceptions import HTTPException
 from werkzeug.http import HTTP_STATUS_CODES
@@ -15,10 +17,8 @@ from .constructs import NameDict
 from .deserialize import deserialize_meta
 from .exc import (InvalidNirumServiceMethodNameError,
                   InvalidNirumServiceMethodTypeError,
-                  NirumHttpError,
                   NirumProcedureArgumentRequiredError,
                   NirumProcedureArgumentValueError,
-                  NirumUrlError,
                   UnexpectedNirumResponseError)
 from .func import url_endswith_slash
 from .serialize import serialize_meta
@@ -164,7 +164,10 @@ class WsgiApp:
         except (NirumProcedureArgumentValueError,
                 NirumProcedureArgumentRequiredError) as e:
             return self.error(400, request, message=str(e))
-        result = service_method(**arguments)
+        try:
+            result = service_method(**arguments)
+        except Exception as e:
+            return self.error(500, request, str(e))
         if not self._check_return_type(type_hints['_return'], result):
             return self.error(
                 400,
@@ -177,7 +180,7 @@ class WsgiApp:
                         )
             )
         else:
-            return self._json_response(200, serialize_meta(result))
+            return self._raw_response(200, serialize_meta(result))
 
     def _parse_procedure_arguments(self, type_hints, request_json):
         arguments = {}
@@ -214,7 +217,7 @@ class WsgiApp:
         else:
             return True
 
-    def _make_error_response(self, error_type, message=None):
+    def make_error_response(self, error_type, message=None):
         """Create error response json temporary.
 
         .. code-block:: nirum
@@ -243,35 +246,64 @@ class WsgiApp:
         status_code_text = HTTP_STATUS_CODES.get(status_code, 'http error')
         status_error_tag = status_code_text.lower().replace(' ', '_')
         custom_response_map = {
-            404: self._make_error_response(
+            404: self.make_error_response(
                 status_error_tag,
                 'The requested URL {} was not found on this service.'.format(
                     request.path
                 )
             ),
-            400: self._make_error_response(status_error_tag, message),
-            405: self._make_error_response(
+            400: self.make_error_response(status_error_tag, message),
+            405: self.make_error_response(
                 status_error_tag,
                 'The requested URL {} was not allowed HTTP method {}.'.format(
                     request.path, request.method
                 )
             ),
         }
-        return self._json_response(
+        return self._raw_response(
             status_code,
             custom_response_map.get(
-                status_code, self._make_error_response(status_error_tag,
-                                                       status_code_text)
+                status_code,
+                self.make_error_response(
+                    status_error_tag, message or status_code_text
+                )
             )
         )
 
-    def _json_response(self, status_code, response_json, **kwargs):
-        return WsgiResponse(
-            json.dumps(response_json),
-            status_code,
-            content_type='application/json',
-            **kwargs
+    def make_response(self, status_code, headers, content):
+        return status_code, headers, content
+
+    def _raw_response(self, status_code, response_json, **kwargs):
+        response_tuple = self.make_response(
+            status_code, headers=[('Content-type', 'application/json')],
+            content=json.dumps(response_json).encode('utf-8')
         )
+        if not isinstance(response_tuple, collections.Sequence) and \
+                len(response_tuple) == 3:
+            raise TypeError(
+                'make_response() must return a triple of '
+                '(status_code, content, headers): {}'.format(response_tuple)
+            )
+        status_code, headers, content = response_tuple
+        if not isinstance(status_code, integer_types):
+            raise TypeError(
+                '`status_code` have to be instance of integer. not {}'.format(
+                    typing._type_repr(type(status_code))
+                )
+            )
+        if not isinstance(headers, collections.Sequence):
+            raise TypeError(
+                '`headers` have to be instance of sequence. not {}'.format(
+                    typing._type_repr(type(headers))
+                )
+            )
+        if not isinstance(content, bytes):
+            raise TypeError(
+                '`content` have to be instance of bytes. not {}'.format(
+                    typing._type_repr(type(content))
+                )
+            )
+        return WsgiResponse(content, status_code, headers, **kwargs)
 
 
 class Client:
@@ -294,20 +326,70 @@ class Client:
         request_url = urllib.parse.urlunsplit((
             scheme, netloc, path, qs, ''
         ))
-        req = urllib.request.Request(
-            request_url, data=json.dumps(payload).encode('utf-8'),
-            headers={'Content-Type': 'application/json;charset=utf-8',
-                     'Accepts': 'application/json'}
-        )
-        return self.make_request(req)
+        return self.do_request(request_url, payload)
 
-    def make_request(self, request):
-        try:
-            response = self.opener.open(request, None)
-        except urllib.error.URLError as e:
-            raise NirumUrlError(e)
-        except urllib.error.HTTPError as e:
-            raise NirumHttpError(e.url, e.code, e.msg, e.hdrs, e.fp)
+    def make_request(self, method, request_url, headers, payload):
+        return (
+            method, request_url, headers, json.dumps(payload).encode('utf-8')
+        )
+
+    def do_request(self, request_url, payload):
+        request_tuple = self.make_request(
+            u'POST',
+            request_url,
+            [
+                ('Content-type', 'application/json;charset=utf-8'),
+                ('Accepts', 'application/json'),
+            ],
+            payload
+        )
+        if not isinstance(request_tuple, collections.Sequence) and \
+                len(request_tuple) == 3:
+            raise TypeError(
+                'make_request() must return a triple of '
+                '(status_code, content, headers): {}'.format(request_tuple)
+            )
+        http_method, request_url, headers, content = request_tuple
+        if not isinstance(request_url, text_type):
+            raise TypeError(
+                '`request_url` have to be instance of text. not {}'.format(
+                    typing._type_repr(type(request_url))
+                )
+            )
+        if not isinstance(headers, collections.Sequence):
+            raise TypeError(
+                '`headers` have to be instance of sequence. not {}'.format(
+                    typing._type_repr(type(headers))
+                )
+            )
+        if not isinstance(content, bytes):
+            raise TypeError(
+                '`content` have to be instance of bytes. not {}'.format(
+                    typing._type_repr(type(content))
+                )
+            )
+        if not isinstance(http_method, text_type):
+            raise TypeError(
+                '`method` have to be instance of text. not {}'.format(
+                    typing._type_repr(type(http_method))
+                )
+            )
+        http_method = http_method.upper()
+        proper_http_method_names = {
+            'GET', 'POST', 'PUT', 'DELETE',
+            'OPTIONS', 'TRACE', 'CONNECT', 'HEAD'
+        }
+        if http_method not in proper_http_method_names:
+            raise ValueError(
+                '`method` have to be one of {!r}.: {}'.format(
+                    proper_http_method_names, http_method
+                )
+            )
+        request = urllib.request.Request(request_url, data=content)
+        request.get_method = lambda: http_method.upper()
+        for header_name, header_content in headers:
+            request.add_header(header_name, header_content)
+        response = self.opener.open(request, None)
         response_text = response.read()
         if 200 <= response.status < 300:
             return response_text.decode('utf-8')

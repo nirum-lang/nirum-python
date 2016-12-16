@@ -325,12 +325,17 @@ class MusicService(Service):
             'music': text_type,
             '_return': text_type,
             '_names': NameDict([('music', 'norae')])
-        }
+        },
+        'raise_application_error_request': {
+            '_return': text_type,
+            '_names': NameDict([])
+        },
     }
     __nirum_method_names__ = NameDict([
         ('get_music_by_artist_name', 'get_music_by_artist_name'),
         ('incorrect_return', 'incorrect_return'),
         ('get_artist_by_music', 'find_artist'),
+        ('raise_application_error_request', 'raise_application_error_request'),
     ])
 
     def get_music_by_artist_name(self, artist_name):
@@ -341,6 +346,9 @@ class MusicService(Service):
 
     def get_artist_by_music(self, music):
         raise NotImplementedError('get_artist_by_music')
+
+    def raise_application_error_request(self):
+        raise NotImplementedError('raise_application_error_request')
 
 
 class MusicServiceClient(Client, MusicService):

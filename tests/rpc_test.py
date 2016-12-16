@@ -35,6 +35,9 @@ class MusicServiceImpl(nf.MusicService):
                 return k
         return u'none'
 
+    def raise_application_error_request(self):
+        raise ValueError('hello world')
+
 
 class MusicServiceNameErrorImpl(nf.MusicService):
 
@@ -80,6 +83,20 @@ def assert_response(response, status_code, expect_json):
         response.get_data(as_text=True)
     )
     assert actual_response_json == expect_json
+
+
+def test_rpc_internal_error(fx_test_client):
+    response = fx_test_client.post('/?method=raise_application_error_request')
+    assert response.status_code == 500, response.get_data(as_text=True)
+    actual_response_json = json.loads(
+        response.get_data(as_text=True)
+    )
+    expected_json = {
+        '_type': 'error',
+        '_tag': 'internal_server_error',
+        'message': 'hello world'
+    }
+    assert actual_response_json == expected_json
 
 
 def test_wsgi_app_error(fx_test_client):
@@ -247,10 +264,10 @@ def test_wsgi_app_with_behind_name(fx_test_client):
 
 
 @mark.parametrize('url, expected_url', [
-    ('http://foobar.com', 'http://foobar.com/'),
-    ('http://foobar.com/', 'http://foobar.com/'),
-    ('http://foobar.com?a=1#a', 'http://foobar.com/'),
-    ('http://foobar.com/?a=1#a', 'http://foobar.com/'),
+    (u'http://foobar.com', u'http://foobar.com/'),
+    (u'http://foobar.com/', u'http://foobar.com/'),
+    (u'http://foobar.com?a=1#a', u'http://foobar.com/'),
+    (u'http://foobar.com/?a=1#a', u'http://foobar.com/'),
 ])
 def test_rpc_client(url, expected_url):
     assert Client(url).url == expected_url
@@ -263,10 +280,41 @@ def test_rpc_client_error(url):
 
 
 def test_rpc_client_service(monkeypatch):
-    url = 'http://foobar.com/'
+    url = u'http://foobar.com/'
     client = nf.MusicServiceClient(url, MockOpener(url, MusicServiceImpl))
     nine_crimes = '9 crimes'
     damien_music = [nine_crimes, 'Elephant']
     damien_rice = 'damien rice'
     assert client.get_music_by_artist_name(damien_rice) == damien_music
     assert client.get_artist_by_music(nine_crimes) == damien_rice
+
+
+@mark.parametrize('method_name', ['POST', 'post'])
+def test_rpc_client_make_request(method_name, monkeypatch):
+    naver = u'http://naver.com'
+    payload = {'hello': 'world'}
+    client = nf.MusicServiceClient(naver, MockOpener(naver, MusicServiceImpl))
+    actual_method, request_url, header, actual_payload = client.make_request(
+        method_name,
+        naver,
+        {
+            'Content-type': 'application/json;charset=utf-8',
+            'Accepts': 'application/json'
+        },
+        payload
+    )
+    assert actual_method == method_name
+    assert request_url == naver
+    assert payload == json.loads(actual_payload.decode('utf-8'))
+    assert header == {'Content-type': 'application/json;charset=utf-8',
+                      'Accepts': 'application/json'}
+    with raises(ValueError):
+        request_url, header, actual_payload = client.make_request(
+            u'FOO',
+            naver,
+            {
+                'Content-type': 'application/json;charset=utf-8',
+                'Accepts': 'application/json'
+            },
+            payload
+        )

@@ -2,17 +2,13 @@
 ~~~~~~~~~~~~~~~~~~
 
 """
-from six.moves import urllib
-
 __all__ = (
     'InvalidNirumServiceMethodNameError',
     'InvalidNirumServiceMethodTypeError',
-    'NirumHttpError',
     'NirumProcedureArgumentError',
     'NirumProcedureArgumentRequiredError',
     'NirumProcedureArgumentValueError',
     'NirumServiceError',
-    'NirumUrlError',
     'UnexpectedNirumResponseError',
 )
 
@@ -41,17 +37,5 @@ class NirumProcedureArgumentValueError(NirumProcedureArgumentError):
     """WIP"""
 
 
-class NirumHttpError(urllib.error.HTTPError, NirumServiceError):
-    """TODO"""
-
-
-class NirumUrlError(urllib.error.URLError, NirumServiceError):
-    """TODO"""
-
-    def __init__(self, exc):
-        self.text = exc.read()
-        super().__init__(exc.reason)
-
-
-class UnexpectedNirumResponseError(NirumHttpError):
+class UnexpectedNirumResponseError(IOError):
     """TODO"""
