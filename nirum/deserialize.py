@@ -12,6 +12,8 @@ import uuid
 from iso8601 import iso8601, parse_date
 from six import text_type
 
+from ._compat import get_tuple_param_types, get_union_types, is_union_type
+
 __all__ = (
     'deserialize_abstract_type',
     'deserialize_boxed_type',
@@ -96,17 +98,22 @@ def deserialize_abstract_type(cls, data):
 
 
 def deserialize_tuple_type(cls, data):
-    if not cls.__tuple_params__:
+    tuple_types = get_tuple_param_types(cls)
+    if tuple_types is None and isinstance(data, tuple):
+        return data
+    tuple_type_length = len(tuple_types)
+    data_length = len(data)
+    if not tuple_types:
         return tuple(data)
-    if len(cls.__tuple_params__) != len(data):
+    if tuple_type_length != data_length:
         raise ValueError(
             'Expected {}-tuple, not {}-tuple'.format(
-                len(cls.__tuple_params__), len(data)
+                tuple_type_length, data_length
             )
         )
     return tuple(
         deserialize_meta(t, d)
-        for t, d in zip(cls.__tuple_params__, data)
+        for t, d in zip(tuple_types, data)
     )
 
 
@@ -142,11 +149,12 @@ def deserialize_primitive(cls, data):
 
 
 def deserialize_optional(cls, data):
-    if not any(isinstance(None, ut) for ut in cls.__union_params__):
+    union_types = get_union_types(cls)
+    if not any(isinstance(None, ut) for ut in union_types):
         raise ValueError(cls)
     if data is None:
         return data
-    for union_type in cls.__union_params__:
+    for union_type in union_types:
         if isinstance(None, union_type):
             continue
         else:
@@ -174,7 +182,7 @@ def deserialize_meta(cls, data):
         d = deserialize_tuple_type(cls, data)
     elif is_support_abstract_type(cls):
         d = deserialize_abstract_type(cls, data)
-    elif type(cls) is typing.UnionMeta:
+    elif is_union_type(cls):
         d = deserialize_optional(cls, data)
     elif callable(cls) and cls in _NIRUM_PRIMITIVE_TYPE:
         d = deserialize_primitive(cls, data)

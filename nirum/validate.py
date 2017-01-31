@@ -4,6 +4,8 @@
 """
 import typing
 
+from ._compat import get_abstract_param_types, get_union_types, is_union_type
+
 __all__ = (
     'validate_boxed_type', 'validate_record_type', 'validate_type',
     'validate_unboxed_type', 'validate_union_type',
@@ -12,15 +14,25 @@ __all__ = (
 
 def validate_type(data, type_):
     instance_check = False
-    try:
-        instance_check = isinstance(data, type_)
-    except TypeError:
-        if type(type_) is typing.UnionMeta:
-            instance_check = any(
-                isinstance(data, t) for t in type_.__union_params__
-            )
-        else:
-            raise ValueError('{!r} cannot validated.'.format(type_))
+    abstract_types = {typing.AbstractSet, typing.Sequence}
+    if hasattr(type_, '__origin__') and type_.__origin__ in abstract_types:
+        param_type = get_abstract_param_types(type_)
+        imp_types = {
+            typing.AbstractSet: set,
+            typing.Sequence: list,
+        }
+        instance_check = isinstance(data, imp_types[type_.__origin__]) and \
+            all(isinstance(item, param_type[0]) for item in data)
+    else:
+        try:
+            instance_check = isinstance(data, type_)
+        except TypeError:
+            if is_union_type(type_):
+                instance_check = any(
+                    isinstance(data, t) for t in get_union_types(type_)
+                )
+            else:
+                raise ValueError('{!r} cannot validated.'.format(type_))
     return instance_check
 
 

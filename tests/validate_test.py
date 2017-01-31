@@ -1,10 +1,11 @@
 import decimal
+import typing
 
 from pytest import raises
 from six import text_type
 
 from nirum.validate import (validate_unboxed_type, validate_record_type,
-                            validate_union_type)
+                            validate_union_type, validate_type)
 
 
 def test_validate_unboxed_type():
@@ -51,3 +52,7 @@ def test_validate_layered_boxed_types(fx_layered_boxed_types):
 
     with raises(TypeError):
         assert validate_unboxed_type(A(u'test'), B)
+
+
+def test_validate_abstract_set():
+    assert validate_type({1, 2, 3}, typing.AbstractSet[int])
