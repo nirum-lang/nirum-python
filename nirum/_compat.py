@@ -25,23 +25,22 @@ except AttributeError:
     utc = UTC()
 
 
-if hasattr(typing, 'UnionMeta'):
-    def is_union_type(type_):
-        return isinstance(type_, typing.UnionMeta) or \
-            isinstance(type(type_), typing.UnionMeta)
-
-    def get_union_types(type_):
-        if is_union_type(type_):
-            return type_.__union_params__ \
-                if hasattr(type_, '__union_params__') \
-                else type_.__args__
-else:
+if hasattr(typing, '_Union'):
     def is_union_type(type_):
         return isinstance(type_, typing._Union)
 
     def get_union_types(type_):
         if is_union_type(type_):
             return type_.__args__
+else:
+    def is_union_type(type_):
+        return isinstance(type_, typing.UnionMeta)
+
+    def get_union_types(type_):
+        if is_union_type(type_):
+            return type_.__union_params__ \
+                if hasattr(type_, '__union_params__') \
+                else type_.__args__
 
 
 def get_abstract_param_types(type_):
