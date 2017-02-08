@@ -5,6 +5,7 @@ from six.moves import urllib
 from six.moves.http_client import HTTPResponse
 from werkzeug.test import Client
 from werkzeug.wrappers import Response
+from werkzeug.wsgi import DispatcherMiddleware
 
 from .func import url_endswith_slash
 from .rpc import WsgiApp
@@ -28,10 +29,21 @@ class MockOpener(urllib.request.OpenerDirector):
 
     def __init__(self, url, service_impl_cls):
         self.url = url_endswith_slash(url)
-        self.wsgi_app = WsgiApp(service_impl_cls())
         self.scheme, self.host, self.path, _, _ = urllib.parse.urlsplit(
             self.url
         )
+
+        def null_app(environ, start_response):
+            start_response('404 Not Found', [('Content-Type', 'text/plain')])
+            return ['Not Found']
+
+        wsgi_app = WsgiApp(service_impl_cls())
+        if self.path != '/':
+            self.wsgi_app = DispatcherMiddleware(
+                null_app, {self.path[:-1]: wsgi_app}
+            )
+        else:
+            self.wsgi_app = wsgi_app
         self.wsgi_test_client = Client(self.wsgi_app, Response)
 
     def open(self, fullurl, data, timeout=socket._GLOBAL_DEFAULT_TIMEOUT):
