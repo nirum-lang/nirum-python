@@ -2,6 +2,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 """
+import collections
 import typing
 
 from ._compat import get_abstract_param_types, get_union_types, is_union_type
@@ -14,12 +15,13 @@ __all__ = (
 
 def validate_type(data, type_):
     instance_check = False
-    abstract_types = {typing.AbstractSet, typing.Sequence}
+    abstract_types = {typing.AbstractSet, typing.Sequence, typing.Mapping}
     if hasattr(type_, '__origin__') and type_.__origin__ in abstract_types:
         param_type = get_abstract_param_types(type_)
         imp_types = {
             typing.AbstractSet: set,
             typing.Sequence: list,
+            typing.Mapping: collections.Mapping,
         }
         instance_check = isinstance(data, imp_types[type_.__origin__]) and \
             all(isinstance(item, param_type[0]) for item in data)

@@ -400,3 +400,49 @@ class Token:
     @classmethod
     def __nirum_deserialize__(cls, value):
         return deserialize_unboxed_type(cls, value)
+
+
+class ComplexKeyMap(object):
+
+    __slots__ = (
+        'value',
+    )
+    __nirum_record_behind_name__ = (
+        'complex_key_map'
+    )
+    __nirum_field_types__ = {
+        'value': typing.Mapping[Point, Point]
+    }
+    __nirum_field_names__ = name_dict_type([
+        ('value', 'value')
+    ])
+
+    def __init__(self, value):
+        self.value = value
+        validate_record_type(self)
+
+    def __repr__(self):
+        return '{0}({1})'.format(
+            (type(self).__module__ + '.' + type(self).__name__),
+            ', '.join('{}={}'.format(attr, getattr(self, attr))
+                      for attr in self.__slots__)
+        )
+
+    def __eq__(self, other):
+        return isinstance(other, ComplexKeyMap) and all(
+            getattr(self, attr) == getattr(other, attr)
+            for attr in self.__slots__
+        )
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __nirum_serialize__(self):
+        return serialize_record_type(self)
+
+    @classmethod
+    def __nirum_deserialize__(cls, value):
+        return deserialize_record_type(cls, value)
+
+    def __hash__(self):
+        return hash((self.value,))

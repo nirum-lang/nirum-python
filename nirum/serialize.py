@@ -2,6 +2,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 """
+import collections
 import datetime
 import decimal
 import uuid
@@ -67,11 +68,11 @@ def serialize_meta(data):
         d = str(data)
     elif isinstance(data, set) or isinstance(data, list):
         d = [serialize_meta(e) for e in data]
-    elif isinstance(data, dict):
-        d = {
-            k: serialize_meta(v)
+    elif isinstance(data, collections.Mapping):
+        d = [
+            {'key': serialize_meta(k), 'value': serialize_meta(v)}
             for k, v in data.items()
-        }
+        ]
     else:
         d = data
     return d

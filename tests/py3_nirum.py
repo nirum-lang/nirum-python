@@ -403,3 +403,50 @@ class Token:
 
     def __hash__(self) -> int:  # noqa
         return hash((self.__class__, self.value))
+
+
+class ComplexKeyMap(object):
+    # TODO: docstring
+
+    __slots__ = (
+        'value',
+    )
+    __nirum_record_behind_name__ = (
+        'complex_key_map'
+    )
+    __nirum_field_types__ = {
+        'value': typing.Mapping[Point, Point]
+    }
+    __nirum_field_names__ = name_dict_type([
+        ('value', 'value')
+    ])
+
+    def __init__(self, value: typing.Mapping[Point, Point]) -> None:
+        self.value = value
+        validate_record_type(self)
+
+    def __repr__(self) -> bool:
+        return '{0}({1})'.format(
+            typing._type_repr(type(self)),
+            ', '.join('{}={}'.format(attr, getattr(self, attr))
+                      for attr in self.__slots__)
+        )
+
+    def __eq__(self, other) -> bool:
+        return isinstance(other, ComplexKeyMap) and all(
+            getattr(self, attr) == getattr(other, attr)
+            for attr in self.__slots__
+        )
+
+    def __ne__(self, other) -> bool:
+        return not self == other
+
+    def __nirum_serialize__(self) -> typing.Mapping[str, typing.Any]:
+        return serialize_record_type(self)
+
+    @classmethod
+    def __nirum_deserialize__(cls: type, value) -> 'ComplexKeyMap':
+        return deserialize_record_type(cls, value)
+
+    def __hash__(self) -> int:
+        return hash((self.value,))
