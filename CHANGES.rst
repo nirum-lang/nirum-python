@@ -4,7 +4,7 @@ Changelog
 Version 0.4.0
 -------------
 
-To be released.
+Release on March 20, 2017.
 
 - Encoding of map types was changed according to the `Nirum serialization
   specification`__.  [:issue:`66`]
