@@ -13,8 +13,8 @@ import uuid
 from iso8601 import iso8601, parse_date
 from six import text_type
 
-from ._compat import get_tuple_param_types, get_union_types, is_union_type
 from .datastructures import Map
+from ._compat import get_tuple_param_types, get_union_types, is_union_type
 
 __all__ = (
     'deserialize_abstract_type',

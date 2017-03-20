@@ -3,7 +3,7 @@ import pickle
 
 from pytest import raises
 
-from nirum.datastructures import Map
+from nirum.datastructures import List, Map
 
 
 def test_map_init():
@@ -68,3 +68,23 @@ def test_map_repr():
     assert repr(Map()) == 'nirum.datastructures.Map()'
     assert repr(Map(a=1)) == "nirum.datastructures.Map({'a': 1})"
     assert repr(Map(a=1, b=2)) == "nirum.datastructures.Map({'a': 1, 'b': 2})"
+
+
+def test_list():
+    immutable_list = List([1, 2])
+    with raises(AttributeError):
+        immutable_list.append(1)
+
+    with raises(TypeError):
+        immutable_list + [3]
+
+    assert isinstance(immutable_list, collections.Sequence)
+    assert not isinstance(immutable_list, collections.MutableSequence)
+    assert immutable_list[0] == 1
+    assert len(immutable_list) == 2
+    assert 2 in immutable_list
+    assert next(iter(immutable_list)) == 1
+    assert immutable_list.index(2) == 1
+    assert immutable_list.count(1) == 1
+    assert immutable_list.count(2) == 1
+    assert immutable_list.count(3) == 0
