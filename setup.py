@@ -27,7 +27,7 @@ def get_version():
 setup_requires = []
 service_requires = [
     # FIXME Test Werkzeug 0.9, 0.10, 0.11 as well
-    'Werkzeug >= 0.11, < 0.12',
+    'Werkzeug >= 0.11, < 1.0',
 ]
 install_requires = [
     'six', 'iso8601',
