@@ -1,6 +1,8 @@
 """:mod:`nirum.datastructures` --- Immutable data structures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. versionadded:: 0.4.0
+
 """
 import collections
 
