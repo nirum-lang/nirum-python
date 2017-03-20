@@ -1,3 +1,4 @@
+import collections
 import datetime
 import decimal
 import numbers
@@ -236,6 +237,86 @@ def test_deserialize_meta_iterable(
     if expect_iter is None:
         expect_iter = iter_
     assert deserialized == python_type(expect_iter)
+
+
+def test_deserialize_meta_map(fx_record_type, fx_unboxed_type):
+    map_type = typing.Mapping[fx_record_type, fx_record_type]
+    with raises(ValueError):
+        deserialize_meta(map_type, {})
+    with raises(ValueError):
+        deserialize_meta(map_type, {'_type': 'hello'})
+    empty = deserialize_meta(map_type, [])
+    assert isinstance(empty, collections.Mapping)
+    assert not isinstance(empty, collections.MutableMapping)
+    assert not list(empty)
+    with raises(ValueError):
+        deserialize_meta(map_type, [{}])
+    with raises(ValueError):
+        deserialize_meta(map_type,
+                         [{'key': {'_type': 'point', 'x': 1.0, 'top': 1.0}}])
+    with raises(ValueError):
+        deserialize_meta(map_type,
+                         [{'value': {'_type': 'point', 'x': 1.0, 'top': 1.0}}])
+    with raises(ValueError):
+        deserialize_meta(map_type, [
+            {'key': {'_type': 'point', 'x': 1.0, 'top': 1.0}, 'value': 'V'}
+        ])
+    with raises(ValueError):
+        deserialize_meta(map_type, [
+            {'key': 'K', 'value': {'_type': 'point', 'x': 1.0, 'top': 1.0}}
+        ])
+    map_ = deserialize_meta(map_type, [
+        {
+            'key': {'_type': 'point', 'x': 1.0, 'top': 2.0},
+            'value': {'_type': 'point', 'x': 3.0, 'top': 4.0},
+        },
+    ])
+    assert isinstance(map_, collections.Mapping)
+    assert not isinstance(map_, collections.MutableMapping)
+    assert list(map_.items()) == [
+        (
+            fx_record_type(
+                left=fx_unboxed_type(1.0),
+                top=fx_unboxed_type(2.0)
+            ),
+            fx_record_type(
+                left=fx_unboxed_type(3.0),
+                top=fx_unboxed_type(4.0)
+            ),
+        ),
+    ]
+    map2 = deserialize_meta(map_type, [
+        {
+            'key': {'_type': 'point', 'x': 1.0, 'top': 2.0},
+            'value': {'_type': 'point', 'x': 3.0, 'top': 4.0},
+        },
+        {
+            'key': {'_type': 'point', 'x': 5.0, 'top': 6.0},
+            'value': {'_type': 'point', 'x': 7.0, 'top': 8.0},
+        },
+    ])
+    assert sorted(map2.items(), key=lambda item: item[0].left.value) == [
+        (
+            fx_record_type(
+                left=fx_unboxed_type(1.0),
+                top=fx_unboxed_type(2.0)
+            ),
+            fx_record_type(
+                left=fx_unboxed_type(3.0),
+                top=fx_unboxed_type(4.0)
+            ),
+        ),
+        (
+            fx_record_type(
+                left=fx_unboxed_type(5.0),
+                top=fx_unboxed_type(6.0)
+            ),
+            fx_record_type(
+                left=fx_unboxed_type(7.0),
+                top=fx_unboxed_type(8.0)
+            ),
+        ),
+    ]
 
 
 def test_deserialize_tuple():

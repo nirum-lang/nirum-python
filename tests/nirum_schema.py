@@ -15,6 +15,6 @@ def import_nirum_fixture():
         [
             'A', 'B', 'C', 'Circle', 'Location', 'MusicService',
             'MusicServiceClient', 'Offset', 'Point', 'Rectangle', 'Shape',
-            'Token',
+            'Token', 'ComplexKeyMap',
         ]
     )

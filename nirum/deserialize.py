@@ -2,6 +2,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 """
+import collections
 import datetime
 import decimal
 import enum
@@ -13,6 +14,7 @@ from iso8601 import iso8601, parse_date
 from six import text_type
 
 from ._compat import get_tuple_param_types, get_union_types, is_union_type
+from .datastructures import Map
 
 __all__ = (
     'deserialize_abstract_type',
@@ -56,6 +58,7 @@ def deserialize_iterable_abstract_type(cls, cls_origin_type, data):
         typing.List: list,
         typing.Set: set,
         typing.AbstractSet: set,
+        typing.Mapping: Map,
     }
     deserialized_data = data
     cls_primitive_type = abstract_type_map[cls_origin_type]
@@ -65,13 +68,37 @@ def deserialize_iterable_abstract_type(cls, cls_origin_type, data):
     type_params = (cls.__args__
                    if hasattr(cls, '__args__')
                    else cls.__parameters__)
-    elem_type = type_params[0]
-    if isinstance(elem_type, typing.TypeVar):
-        deserialized_data = cls_primitive_type(data)
-    else:
-        deserialized_data = cls_primitive_type(
-            deserialize_meta(elem_type, d) for d in data
-        )
+    if len(type_params) == 1:
+        elem_type, = type_params
+        if isinstance(elem_type, typing.TypeVar):
+            deserialized_data = cls_primitive_type(data)
+        else:
+            deserialized_data = cls_primitive_type(
+                deserialize_meta(elem_type, d) for d in data
+            )
+    elif len(type_params) == 2:
+        # Key-value
+        key_type, value_type = type_params
+        assert not (isinstance(key_type, typing.TypeVar) or
+                    isinstance(value_type, typing.TypeVar))
+        if not isinstance(data, collections.Sequence):
+            raise ValueError('map must be an array of item objects e.g. '
+                             '[{"key": ..., "value": ...}, ...]')
+
+        def parse_pair(pair):
+            if not isinstance(pair, collections.Mapping):
+                raise ValueError('map item must be a JSON object')
+            try:
+                key = pair['key']
+                value = pair['value']
+            except KeyError:
+                raise ValueError('map item must consist of "key" and "value" '
+                                 'fields e.g. {"key": ..., "value": ...}')
+            return (
+                deserialize_meta(key_type, key),
+                deserialize_meta(value_type, value),
+            )
+        deserialized_data = cls_primitive_type(map(parse_pair, data))
     return deserialized_data
 
 
@@ -79,7 +106,6 @@ def deserialize_abstract_type(cls, data):
     abstract_type_map = {
         typing.Sequence: list,
         typing.List: list,
-        typing.Mapping: dict,
         typing.Dict: dict,
         typing.Set: set,
         typing.AbstractSet: set,
@@ -89,7 +115,7 @@ def deserialize_abstract_type(cls, data):
         cls_origin_type = cls
     iterable_types = {
         typing.Sequence, typing.List, typing.Tuple, typing.Set,
-        typing.AbstractSet
+        typing.AbstractSet, typing.Mapping,
     }
     if cls_origin_type in iterable_types:
         return deserialize_iterable_abstract_type(cls, cls_origin_type, data)

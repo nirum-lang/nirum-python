@@ -7,6 +7,10 @@ from pytest import mark
 from nirum._compat import utc
 from nirum.serialize import (serialize_unboxed_type, serialize_record_type,
                              serialize_meta, serialize_union_type)
+from .nirum_schema import import_nirum_fixture
+
+
+nirum_fixture = import_nirum_fixture()
 
 
 def test_serialize_unboxed_type(fx_offset, fx_token_type):
@@ -97,3 +101,27 @@ def test_serialize_meta_set_of_record(fx_record_type, fx_unboxed_type,
     serialize_result = serialize_meta({record, record2})
     assert record.__nirum_serialize__() in serialize_result
     assert record2.__nirum_serialize__() in serialize_result
+
+
+def test_serialize_meta_map(fx_point):
+    Point = nirum_fixture.Point
+    Offset = nirum_fixture.Offset
+    record = nirum_fixture.ComplexKeyMap(value={
+        fx_point: Point(left=Offset(1.23), top=Offset(4.56)),
+        Point(left=Offset(1.23), top=Offset(4.56)):
+            Point(left=Offset(7.89), top=Offset(10.11)),
+    })
+    result = serialize_meta(record)
+    assert sorted(result) == sorted({
+        '_type': 'complex_key_map',
+        'value': [
+            {
+                'key': {'_type': 'point', 'x': 3.14, 'top': 1.592},
+                'value': {'_type': 'point', 'x': 1.23, 'top': 4.56},
+            },
+            {
+                'key': {'_type': 'point', 'x': 1.23, 'top': 4.56},
+                'value': {'_type': 'point', 'x': 7.89, 'top': 10.11},
+            },
+        ],
+    })
