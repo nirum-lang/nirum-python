@@ -6,7 +6,7 @@
 """
 import collections
 
-__all__ = 'List', 'Map'
+__all__ = 'List', 'Map', 'list_type', 'map_type'
 
 
 class Map(collections.Mapping):
@@ -73,3 +73,7 @@ class List(collections.Sequence):
 
     def count(self, item):
         return self.l.count(item)
+
+
+map_type = Map
+list_type = List

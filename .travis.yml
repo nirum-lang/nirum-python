@@ -9,3 +9,7 @@ install:
 script:
   - py.test tests -v
   - pip install 'typing<3.5.2' && py.test tests -v
+  - |
+      if [ -z "$(git diff --name-only "$TRAVIS_COMMIT_RANGE" | grep CHANGES\.rst)" ]; then
+        exit 1
+      fi
