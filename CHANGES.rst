@@ -16,6 +16,6 @@ Release on March 20, 2017.
 - Aliased :class:`~nirum.datastructures.Map` as ``map_type``, and
   :class:`~nirum.datastructures.List` as ``list_type`` to avoid name
   conflict with user-defined types.
-
+- Compare type with its abstract type in :func:`nirum.validate.validate_type`.
 
 __ https://github.com/spoqa/nirum/blob/f1629787f45fef17eeab8b4f030c34580e0446b8/docs/serialization.md
