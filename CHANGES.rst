@@ -21,6 +21,8 @@ Release on March 20, 2017.
 Version 0.4.1
 -------------
 
+Release on May 2nd, 2017.
+
 - Compare type with its abstract type in :func:`nirum.validate.validate_type`.
 
 
