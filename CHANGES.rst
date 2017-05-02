@@ -16,6 +16,11 @@ Release on March 20, 2017.
 - Aliased :class:`~nirum.datastructures.Map` as ``map_type``, and
   :class:`~nirum.datastructures.List` as ``list_type`` to avoid name
   conflict with user-defined types.
+
+
+Version 0.4.1
+-------------
+
 - Compare type with its abstract type in :func:`nirum.validate.validate_type`.
 
 
