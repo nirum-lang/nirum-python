@@ -13,5 +13,6 @@ Release on March 20, 2017.
   [:issue:`66`]
 - Added :class:`nirum.datastructures.List` which is an immutable list.
   [:issue:`49`]
+- Compare type with its abstract type in :func:`nirum.validate.validate_type`.
 
 __ https://github.com/spoqa/nirum/blob/f1629787f45fef17eeab8b4f030c34580e0446b8/docs/serialization.md

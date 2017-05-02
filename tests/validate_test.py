@@ -4,6 +4,7 @@ import typing
 from pytest import raises
 from six import text_type
 
+from nirum.datastructures import List
 from nirum.validate import (validate_unboxed_type, validate_record_type,
                             validate_union_type, validate_type)
 
@@ -56,3 +57,9 @@ def test_validate_layered_boxed_types(fx_layered_boxed_types):
 
 def test_validate_abstract_set():
     assert validate_type({1, 2, 3}, typing.AbstractSet[int])
+    assert validate_type(frozenset([1, 2, 3]), typing.AbstractSet[int])
+
+
+def test_validate_list():
+    assert validate_type([1, 2, 3], typing.Sequence[int])
+    assert validate_type(List([1, 2, 3]), typing.Sequence[int])
