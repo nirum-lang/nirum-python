@@ -14,6 +14,7 @@ from werkzeug.routing import Map, Rule
 from werkzeug.wrappers import Request as WsgiRequest, Response as WsgiResponse
 
 from .constructs import NameDict
+from .datastructures import Map as NirumMap
 from .deserialize import deserialize_meta
 from .exc import (InvalidNirumServiceMethodNameError,
                   InvalidNirumServiceMethodTypeError,
@@ -34,6 +35,7 @@ class Service:
 
     __nirum_service_methods__ = {}
     __nirum_method_names__ = NameDict([])
+    __nirum_method_error_types__ = NirumMap()
 
     def __init__(self):
         for method_name in self.__nirum_service_methods__:
@@ -164,10 +166,13 @@ class WsgiApp:
         except (NirumProcedureArgumentValueError,
                 NirumProcedureArgumentRequiredError) as e:
             return self.error(400, request, message=str(e))
+        method_error = self.service.__nirum_method_error_types__.get(
+            method_facial_name, ()
+        )
         try:
             result = service_method(**arguments)
-        except Exception as e:
-            return self.error(500, request, str(e))
+        except method_error as e:
+            return self._raw_response(400, serialize_meta(e))
         if not self._check_return_type(type_hints['_return'], result):
             return self.error(
                 400,
@@ -390,9 +395,9 @@ class Client:
         for header_name, header_content in headers:
             request.add_header(header_name, header_content)
         response = self.opener.open(request, None)
-        response_text = response.read()
+        response_text = response.read().decode('utf-8')
         if 200 <= response.code < 300:
-            return response_text.decode('utf-8')
+            return response_text
         else:
             raise UnexpectedNirumResponseError(response_text)
 

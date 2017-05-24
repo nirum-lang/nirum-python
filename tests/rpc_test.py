@@ -1,3 +1,4 @@
+import contextlib
 import json
 
 from pytest import fixture, raises, mark
@@ -6,7 +7,8 @@ from werkzeug.test import Client as TestClient
 from werkzeug.wrappers import Response
 
 from nirum.exc import (InvalidNirumServiceMethodTypeError,
-                       InvalidNirumServiceMethodNameError)
+                       InvalidNirumServiceMethodNameError,
+                       UnexpectedNirumResponseError)
 from nirum.rpc import Client, WsgiApp
 from nirum.test import MockOpener
 
@@ -24,6 +26,10 @@ class MusicServiceImpl(nf.MusicService):
     }
 
     def get_music_by_artist_name(self, artist_name):
+        if artist_name == 'error':
+            raise nf.Unknown()
+        elif artist_name not in self.music_map:
+            raise nf.BadRequest()
         return self.music_map.get(artist_name)
 
     def incorrect_return(self):
@@ -83,20 +89,6 @@ def assert_response(response, status_code, expect_json):
         response.get_data(as_text=True)
     )
     assert actual_response_json == expect_json
-
-
-def test_rpc_internal_error(fx_test_client):
-    response = fx_test_client.post('/?method=raise_application_error_request')
-    assert response.status_code == 500, response.get_data(as_text=True)
-    actual_response_json = json.loads(
-        response.get_data(as_text=True)
-    )
-    expected_json = {
-        '_type': 'error',
-        '_tag': 'internal_server_error',
-        'message': 'hello world'
-    }
-    assert actual_response_json == expected_json
 
 
 def test_wsgi_app_error(fx_test_client):
@@ -325,3 +317,23 @@ def test_rpc_client_make_request(method_name, monkeypatch):
             },
             payload
         )
+
+
+@contextlib.contextmanager
+def assert_error(error_type):
+    try:
+        yield
+    except UnexpectedNirumResponseError as e:
+        response_json = json.loads(str(e))
+        assert response_json == error_type().__nirum_serialize__()
+    else:
+        assert False  # MUST error raised
+
+
+def test_rpc_error_types():
+    url = u'http://foobar.com/rpc/'
+    client = nf.MusicServiceClient(url, MockOpener(url, MusicServiceImpl))
+    with assert_error(nf.Unknown):
+        client.get_music_by_artist_name('error')
+    with assert_error(nf.BadRequest):
+        client.get_music_by_artist_name('adele')

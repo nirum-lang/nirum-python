@@ -4,7 +4,7 @@ Changelog
 Version 0.5.0
 -------------
 
-To be released.
+- Service methods became able to specify its error type. [:issue:`71`]
 
 
 Version 0.4.1

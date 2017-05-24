@@ -7,10 +7,11 @@ import uuid
 from six import text_type
 
 from nirum.serialize import (serialize_record_type, serialize_unboxed_type,
-                             serialize_meta)
+                             serialize_meta, serialize_union_type)
 from nirum.deserialize import (deserialize_record_type,
                                deserialize_unboxed_type,
-                               deserialize_meta)
+                               deserialize_meta,
+                               deserialize_union_type)
 from nirum.validate import (validate_unboxed_type, validate_record_type,
                             validate_union_type)
 from nirum.constructs import NameDict, name_dict_type
@@ -307,6 +308,100 @@ class C(object):
         )
 
 
+class HelloError(Exception):
+    # compiled code
+
+    __nirum_union_behind_name__ = 'hello_error'
+    __nirum_field_names__ = name_dict_type([
+        ('unknown', 'unknown'),
+        ('bad_request', 'bad_request')
+    ])
+
+    class Tag(enum.Enum):
+        unknown = 'unknown'
+        bad_request = 'bad_request'
+
+    def __init__(self, *args, **kwargs):
+        raise NotImplementedError(
+            "{0} cannot be instantiated "
+            "since it is an abstract class.  Instantiate a concrete subtype "
+            "of it instead.".format(
+                (type(self).__module__ + '.' + type(self).__name__)
+            )
+        )
+
+    def __nirum_serialize__(self):
+        return serialize_union_type(self)
+
+    @classmethod
+    def __nirum_deserialize__(
+        cls, value
+    ):
+        return deserialize_union_type(cls, value)
+
+
+class Unknown(HelloError):
+    # compiled code
+
+    __slots__ = ()
+    __nirum_tag__ = HelloError.Tag.unknown
+    __nirum_tag_types__ = {}
+    __nirum_tag_names__ = name_dict_type([])
+
+    def __init__(self, ):
+        validate_union_type(self)
+
+    def __repr__(self):
+        return '{0}({1})'.format(
+            (type(self).__module__ + '.' + type(self).__name__),
+            ', '.join('{}={}'.format(attr, getattr(self, attr))
+                      for attr in self.__slots__)
+        )
+
+    def __eq__(self, other):
+        return isinstance(other, Unknown) and all(
+            getattr(self, attr) == getattr(other, attr)
+            for attr in self.__slots__
+        )
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __hash__(self):
+        return hash(self.__nirum_tag__)
+
+
+class BadRequest(HelloError):
+    # compiled code
+
+    __slots__ = ()
+    __nirum_tag__ = HelloError.Tag.bad_request
+    __nirum_tag_types__ = {}
+    __nirum_tag_names__ = name_dict_type([])
+
+    def __init__(self, ):
+        validate_union_type(self)
+
+    def __repr__(self):
+        return '{0}({1})'.format(
+            (type(self).__module__ + '.' + type(self).__name__),
+            ', '.join('{}={}'.format(attr, getattr(self, attr))
+                      for attr in self.__slots__)
+        )
+
+    def __eq__(self, other):
+        return isinstance(other, BadRequest) and all(
+            getattr(self, attr) == getattr(other, attr)
+            for attr in self.__slots__
+        )
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __hash__(self):
+        return hash(self.__nirum_tag__)
+
+
 class MusicService(Service):
 
     __nirum_service_methods__ = {
@@ -337,6 +432,9 @@ class MusicService(Service):
         ('get_artist_by_music', 'find_artist'),
         ('raise_application_error_request', 'raise_application_error_request'),
     ])
+    __nirum_method_error_types__ = {
+        'get_music_by_artist_name': HelloError
+    }
 
     def get_music_by_artist_name(self, artist_name):
         raise NotImplementedError('get_music_by_artist_name')
