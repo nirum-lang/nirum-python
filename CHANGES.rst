@@ -26,10 +26,4 @@ Release on May 2nd, 2017.
 - Compare type with its abstract type in :func:`nirum.validate.validate_type`.
 
 
-Version 0.4.2
--------------
-
-To be released.
-
-
 __ https://github.com/spoqa/nirum/blob/f1629787f45fef17eeab8b4f030c34580e0446b8/docs/serialization.md
