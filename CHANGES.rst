@@ -1,10 +1,18 @@
 Changelog
 =========
 
+Version 0.4.1
+-------------
+
+Release on May 2, 2017.
+
+- Compare type with its abstract type in :func:`nirum.validate.validate_type`.
+
+
 Version 0.4.0
 -------------
 
-To be released.
+Release on March 20, 2017.
 
 - Encoding of map types was changed according to the `Nirum serialization
   specification`__.  [:issue:`66`]

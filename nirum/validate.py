@@ -19,8 +19,8 @@ def validate_type(data, type_):
     if hasattr(type_, '__origin__') and type_.__origin__ in abstract_types:
         param_type = get_abstract_param_types(type_)
         imp_types = {
-            typing.AbstractSet: set,
-            typing.Sequence: list,
+            typing.AbstractSet: collections.Set,
+            typing.Sequence: collections.Sequence,
             typing.Mapping: collections.Mapping,
         }
         instance_check = isinstance(data, imp_types[type_.__origin__]) and \
