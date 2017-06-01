@@ -4,6 +4,8 @@ Changelog
 Version 0.5.0
 -------------
 
+Release on June 1, 2017.
+
 - Service methods became able to specify its error type. [:issue:`71`]
 - Added ``nirum-server`` command to run simply Nirum service.
 
