@@ -2,6 +2,7 @@
 ~~~~~~~~~~~~~~~~~~~
 
 """
+import argparse
 import collections
 import json
 import typing
@@ -11,6 +12,7 @@ from six.moves import urllib
 from werkzeug.exceptions import HTTPException
 from werkzeug.http import HTTP_STATUS_CODES
 from werkzeug.routing import Map, Rule
+from werkzeug.serving import run_simple
 from werkzeug.wrappers import Request as WsgiRequest, Response as WsgiResponse
 
 from .constructs import NameDict
@@ -21,7 +23,7 @@ from .exc import (InvalidNirumServiceMethodNameError,
                   NirumProcedureArgumentRequiredError,
                   NirumProcedureArgumentValueError,
                   UnexpectedNirumResponseError)
-from .func import url_endswith_slash
+from .func import import_string, url_endswith_slash
 from .serialize import serialize_meta
 
 __all__ = 'Client', 'WsgiApp', 'Service', 'client_type', 'service_type'
@@ -407,3 +409,21 @@ class Client:
 # with postfix named `_type`
 service_type = Service
 client_type = Client
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Nirum service runner')
+    parser.add_argument('-H', '--host', help='the host to listen',
+                        default='0.0.0.0')
+    parser.add_argument('-p', '--port', help='the port number to listen',
+                        type=int, default=9322)
+    parser.add_argument('-d', '--debug', help='debug mode',
+                        action='store_true', default=False)
+    parser.add_argument('service_impl', help='service implementation name')
+    args = parser.parse_args()
+    service_impl = import_string(args.service_impl)
+    run_simple(
+        args.host, args.port, WsgiApp(service_impl),
+        use_reloader=args.debug, use_debugger=args.debug,
+        use_evalex=args.debug
+    )

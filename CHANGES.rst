@@ -5,6 +5,7 @@ Version 0.5.0
 -------------
 
 - Service methods became able to specify its error type. [:issue:`71`]
+- Added ``nirum-server`` command to run simply Nirum service.
 
 
 Version 0.4.1

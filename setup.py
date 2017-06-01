@@ -79,6 +79,11 @@ setup(
     license='MIT license',
     packages=find_packages(exclude=['tests']),
     install_requires=install_requires,
+    entry_points={
+        'console_scripts': [
+            'nirum-server = nirum.rpc:main',
+        ],
+    },
     setup_requires=setup_requires,
     extras_require=extras_require,
     classifiers=[]
