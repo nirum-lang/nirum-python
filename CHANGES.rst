@@ -6,6 +6,9 @@ Version 0.5.1
 
 To be released.
 
+- Wheel distributions (``nirum-*.whl``) are now universal between Python 2
+  and 3.  [:issue:`78`]
+
 
 Version 0.5.0
 -------------
