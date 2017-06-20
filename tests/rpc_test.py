@@ -319,6 +319,22 @@ def test_rpc_client_make_request(method_name, monkeypatch):
         )
 
 
+@mark.parametrize('arity', [0, 1, 2, 3, 5])
+def test_client_make_request_arity_check(arity):
+    class ExtendedClient(Client):
+        def make_request(self, method, request_url, headers, payload):
+            return (method, request_url, headers,
+                    json.dumps(payload).encode('utf-8'), None)[:arity]
+    url = 'http://foobar.com/rpc/'
+    client = ExtendedClient(url, MockOpener(url, MusicServiceImpl))
+    with raises(TypeError) as e:
+        client.remote_call('ping', {})
+    assert str(e.value).startswith(
+        'make_request() must return a triple of '
+        '(method, request_url, headers, content), not '
+    )
+
+
 @contextlib.contextmanager
 def assert_error(error_type):
     try:

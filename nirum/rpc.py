@@ -350,11 +350,12 @@ class Client:
             ],
             payload
         )
-        if not isinstance(request_tuple, collections.Sequence) and \
-                len(request_tuple) == 3:
+        if not (isinstance(request_tuple, collections.Sequence) and
+                len(request_tuple) == 4):
             raise TypeError(
                 'make_request() must return a triple of '
-                '(status_code, content, headers): {}'.format(request_tuple)
+                '(method, request_url, headers, content), not ' +
+                repr(request_tuple)
             )
         http_method, request_url, headers, content = request_tuple
         if not isinstance(request_url, text_type):
