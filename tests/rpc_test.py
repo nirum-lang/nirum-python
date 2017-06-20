@@ -255,6 +255,20 @@ def test_wsgi_app_with_behind_name(fx_test_client):
     )
 
 
+@mark.parametrize('arity', [0, 1, 2, 4])
+def test_wsgi_app_make_response_arity_check(arity):
+    class ExtendedWsgiApp(WsgiApp):
+        def make_response(self, status_code, headers, content):
+            return (status_code, headers, content, None)[:arity]
+    wsgi_app = ExtendedWsgiApp(MusicServiceImpl())
+    client = TestClient(wsgi_app, Response)
+    with raises(TypeError) as e:
+        client.post('/?method=get_music_by_artist_name',
+                    data=json.dumps({'artist_name': u'damien rice'}))
+    assert str(e.value).startswith('make_response() must return a triple of '
+                                   '(status_code, headers, content), not ')
+
+
 @mark.parametrize('url, expected_url', [
     (u'http://foobar.com', u'http://foobar.com/'),
     (u'http://foobar.com/', u'http://foobar.com/'),

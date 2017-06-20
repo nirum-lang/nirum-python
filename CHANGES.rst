@@ -11,6 +11,9 @@ To be released.
 - ``nirum.rpc.Client`` and its subtype became to raise ``TypeError`` with
   a better error message when its ``make_request()`` method is overridden and
   it returns a wrong artity of tuple.  [:issue:`80`]
+- ``nirum.rpc.WsgiApp`` and its subtype became to raise ``TypeError`` with
+  a better error message when its ``make_response()`` method is overridden and
+  it returns a wrong artity of tuple.  [:issue:`80`]
 
 
 Version 0.5.0

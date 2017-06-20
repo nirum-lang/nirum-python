@@ -285,11 +285,11 @@ class WsgiApp:
             status_code, headers=[('Content-type', 'application/json')],
             content=json.dumps(response_json).encode('utf-8')
         )
-        if not isinstance(response_tuple, collections.Sequence) and \
-                len(response_tuple) == 3:
+        if not (isinstance(response_tuple, collections.Sequence) and
+                len(response_tuple) == 3):
             raise TypeError(
                 'make_response() must return a triple of '
-                '(status_code, content, headers): {}'.format(response_tuple)
+                '(status_code, headers, content), not ' + repr(response_tuple)
             )
         status_code, headers, content = response_tuple
         if not isinstance(status_code, integer_types):
