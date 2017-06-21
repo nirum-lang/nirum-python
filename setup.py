@@ -1,13 +1,19 @@
 import ast
+import re
 import sys
 
 from setuptools import find_packages, setup,  __version__ as setuptools_version
 
 
-def readme():
+def readme(name='README.rst'):
     try:
-        with open('README.rst') as f:
-            return f.read()
+        with open(name) as f:
+            rst = f.read()
+        return re.sub(
+            r'(^|\n).. include::\s*([^\n]+)($|\n)',
+            lambda m: m.group(1) + (readme(m.group(2)) or '') + m.group(3),
+            rst
+        )
     except (IOError, OSError):
         return
 

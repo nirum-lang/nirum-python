@@ -4,11 +4,14 @@ python:
   - 3.4
   - 3.5
 install:
-  - pip install -U pip setuptools
+  - pip install -U pip setuptools docutils
   - pip install -e .[tests]
 script:
   - py.test tests -v
   - pip install 'typing<3.5.2' && py.test tests -v
+  - rst2html.py --strict CHANGES.rst
+  - rst2html.py --strict README.rst
+  - python setup.py --long-description | rst2html.py --strict
   - |
       if [ -z "$(git diff --name-only "$TRAVIS_COMMIT_RANGE" | grep CHANGES\.rst)" ]; then
         exit 1
