@@ -3,16 +3,8 @@ python:
   - 2.7
   - 3.4
   - 3.5
-install:
-  - pip install -U pip setuptools docutils
-  - pip install -e .[tests]
+install: pip install tox-travis
 script:
-  - pytest -v
-  - pip install 'typing<3.5.2' && pytest -v
-  - rst2html.py --strict CHANGES.rst
-  - rst2html.py --strict README.rst
-  - python setup.py --long-description | rst2html.py --strict
-  - |
-      if [ -z "$(git diff --name-only "$TRAVIS_COMMIT_RANGE" | grep CHANGES\.rst)" ]; then
-        exit 1
-      fi
+- tox
+- tox -e docs
+- git diff --name-only "$TRAVIS_COMMIT_RANGE" | grep CHANGES\.rst
