@@ -92,5 +92,17 @@ setup(
     },
     setup_requires=setup_requires,
     extras_require=extras_require,
-    classifiers=[]
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',
+        'Topic :: Software Development :: Code Generators',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: Software Development :: Object Brokering',
+    ]
 )
