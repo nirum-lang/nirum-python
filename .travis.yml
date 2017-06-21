@@ -7,8 +7,8 @@ install:
   - pip install -U pip setuptools docutils
   - pip install -e .[tests]
 script:
-  - pytest tests -v
-  - pip install 'typing<3.5.2' && pytest tests -v
+  - pytest -v
+  - pip install 'typing<3.5.2' && pytest -v
   - rst2html.py --strict CHANGES.rst
   - rst2html.py --strict README.rst
   - python setup.py --long-description | rst2html.py --strict

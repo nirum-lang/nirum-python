@@ -7,8 +7,8 @@ from nirum.func import import_string
 
 def test_import_string():
     assert import_string('collections:OrderedDict') == collections.OrderedDict
-    assert import_string('collections:OrderedDict({"a": 1})') == \
-            collections.OrderedDict({"a": 1})
+    assert (import_string('collections:OrderedDict({"a": 1})') ==
+            collections.OrderedDict({"a": 1}))
     with raises(ValueError):
         # malformed
         import_string('world')
