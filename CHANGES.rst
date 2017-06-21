@@ -7,8 +7,13 @@ Version 0.5.1
 To be released.
 
 - Added Python 3.6 support.
+- Fixed a bug that service client methods hadn't raised the proper error
+  type but ``nirum.exc.UnexpectedNirumResponseError`` instead.  [`#71`_]
 - Wheel distributions (``nirum-*.whl``) are now universal between Python 2
   and 3.  [`#78`_]
+- ``nirum.rpc.Service`` had been an old-style class on Python 2, but now
+  it became a new-style class also on Python 2.  (As Python 3 has only new-style
+  class, there's no change on Python 3.)  [`#83`_]
 - ``nirum.rpc.Client`` and its subtype became to raise ``TypeError`` with
   a better error message when its ``make_request()`` method is overridden and
   it returns a wrong artity of tuple.  [`#80`_]
@@ -17,8 +22,11 @@ To be released.
   it returns a wrong artity of tuple.  [`#80`_]
 - Fixed a bug that ``Client.ping()`` method had always raised ``TypeError``.
   [`#80`_]
+- Corrected a typo ``Accepts`` on request headers ``Client`` makes to
+  ``Accept``.
 
 .. _#78: https://github.com/spoqa/nirum-python/pull/78
+.. _#83: https://github.com/spoqa/nirum-python/issues/83
 .. _#80: https://github.com/spoqa/nirum-python/pull/80
 
 
