@@ -285,11 +285,11 @@ class WsgiApp:
             status_code, headers=[('Content-type', 'application/json')],
             content=json.dumps(response_json).encode('utf-8')
         )
-        if not isinstance(response_tuple, collections.Sequence) and \
-                len(response_tuple) == 3:
+        if not (isinstance(response_tuple, collections.Sequence) and
+                len(response_tuple) == 3):
             raise TypeError(
                 'make_response() must return a triple of '
-                '(status_code, content, headers): {}'.format(response_tuple)
+                '(status_code, headers, content), not ' + repr(response_tuple)
             )
         status_code, headers, content = response_tuple
         if not isinstance(status_code, integer_types):
@@ -320,12 +320,8 @@ class Client:
         self.opener = opener
 
     def ping(self):
-        req = urllib.request.Request(
-            urllib.parse.urljoin(self.url, './ping/'),
-            headers={'Content-Type': 'application/json;charset=utf-8',
-                     'Accepts': 'application/json'}
-        )
-        return self.make_request(req)
+        r = self.do_request(urllib.parse.urljoin(self.url, './ping/'), {})
+        return json.loads(r) == 'Ok'
 
     def remote_call(self, method_name, payload={}):
         qs = urllib.parse.urlencode({'method': method_name})
@@ -350,11 +346,12 @@ class Client:
             ],
             payload
         )
-        if not isinstance(request_tuple, collections.Sequence) and \
-                len(request_tuple) == 3:
+        if not (isinstance(request_tuple, collections.Sequence) and
+                len(request_tuple) == 4):
             raise TypeError(
                 'make_request() must return a triple of '
-                '(status_code, content, headers): {}'.format(request_tuple)
+                '(method, request_url, headers, content), not ' +
+                repr(request_tuple)
             )
         http_method, request_url, headers, content = request_tuple
         if not isinstance(request_url, text_type):

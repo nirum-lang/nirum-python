@@ -255,6 +255,20 @@ def test_wsgi_app_with_behind_name(fx_test_client):
     )
 
 
+@mark.parametrize('arity', [0, 1, 2, 4])
+def test_wsgi_app_make_response_arity_check(arity):
+    class ExtendedWsgiApp(WsgiApp):
+        def make_response(self, status_code, headers, content):
+            return (status_code, headers, content, None)[:arity]
+    wsgi_app = ExtendedWsgiApp(MusicServiceImpl())
+    client = TestClient(wsgi_app, Response)
+    with raises(TypeError) as e:
+        client.post('/?method=get_music_by_artist_name',
+                    data=json.dumps({'artist_name': u'damien rice'}))
+    assert str(e.value).startswith('make_response() must return a triple of '
+                                   '(status_code, headers, content), not ')
+
+
 @mark.parametrize('url, expected_url', [
     (u'http://foobar.com', u'http://foobar.com/'),
     (u'http://foobar.com/', u'http://foobar.com/'),
@@ -272,7 +286,7 @@ def test_rpc_client_error(url):
 
 
 @mark.parametrize('url', [u'http://foobar.com/', u'http://foobar.com/rpc/'])
-def test_rpc_client_service(monkeypatch, url):
+def test_rpc_client_service(url):
     client = nf.MusicServiceClient(url, MockOpener(url, MusicServiceImpl))
     nine_crimes = '9 crimes'
     damien_music = [nine_crimes, 'Elephant']
@@ -281,7 +295,7 @@ def test_rpc_client_service(monkeypatch, url):
     assert client.get_artist_by_music(nine_crimes) == damien_rice
 
 
-def test_rpc_mock_opener_null_app(monkeypatch):
+def test_rpc_mock_opener_null_app():
     url = u'http://foobar.com/rpc/'
     client = nf.MusicServiceClient(url, MockOpener(url, MusicServiceImpl))
     response = client.opener.wsgi_test_client.post('/')
@@ -289,7 +303,7 @@ def test_rpc_mock_opener_null_app(monkeypatch):
 
 
 @mark.parametrize('method_name', ['POST', 'post'])
-def test_rpc_client_make_request(method_name, monkeypatch):
+def test_rpc_client_make_request(method_name):
     naver = u'http://naver.com'
     payload = {'hello': 'world'}
     client = nf.MusicServiceClient(naver, MockOpener(naver, MusicServiceImpl))
@@ -317,6 +331,28 @@ def test_rpc_client_make_request(method_name, monkeypatch):
             },
             payload
         )
+
+
+def test_client_ping():
+    url = u'http://foobar.com/rpc/'
+    client = Client(url, MockOpener(url, MusicServiceImpl))
+    assert client.ping()
+
+
+@mark.parametrize('arity', [0, 1, 2, 3, 5])
+def test_client_make_request_arity_check(arity):
+    class ExtendedClient(Client):
+        def make_request(self, method, request_url, headers, payload):
+            return (method, request_url, headers,
+                    json.dumps(payload).encode('utf-8'), None)[:arity]
+    url = 'http://foobar.com/rpc/'
+    client = ExtendedClient(url, MockOpener(url, MusicServiceImpl))
+    with raises(TypeError) as e:
+        client.remote_call('ping', {})
+    assert str(e.value).startswith(
+        'make_request() must return a triple of '
+        '(method, request_url, headers, content), not '
+    )
 
 
 @contextlib.contextmanager

@@ -54,7 +54,7 @@ class MockOpener(urllib.request.OpenerDirector):
         scheme, host, path, qs, _ = urllib.parse.urlsplit(req.get_full_url())
         assert self.scheme == scheme
         assert self.host == host
-        assert self.path == path
+        assert self.path == path or self.path + 'ping/' == path
         path_only = urllib.parse.urlunsplit(('', '', path, qs, ''))
         request_func = getattr(self.wsgi_test_client, req.get_method().lower())
         wsgi_response = request_func(
