@@ -342,7 +342,7 @@ class Client:
             request_url,
             [
                 ('Content-type', 'application/json;charset=utf-8'),
-                ('Accepts', 'application/json'),
+                ('Accept', 'application/json'),
             ],
             payload
         )

@@ -17,6 +17,8 @@ To be released.
   it returns a wrong artity of tuple.  [`#80`_]
 - Fixed a bug that ``Client.ping()`` method had always raised ``TypeError``.
   [`#80`_]
+- Corrected a typo ``Accepts`` on request headers ``Client`` makes to
+  ``Accept``.
 
 .. _#78: https://github.com/spoqa/nirum-python/pull/78
 .. _#80: https://github.com/spoqa/nirum-python/pull/80
