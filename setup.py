@@ -2,7 +2,7 @@ import ast
 import re
 import sys
 
-from setuptools import find_packages, setup,  __version__ as setuptools_version
+from setuptools import find_packages, setup, __version__ as setuptools_version
 
 
 def readme(name='README.rst'):

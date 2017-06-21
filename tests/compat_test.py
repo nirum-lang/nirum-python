@@ -3,6 +3,7 @@ import typing
 
 from pytest import mark
 from six import text_type
+
 from nirum._compat import (get_abstract_param_types,
                            get_tuple_param_types,
                            get_union_types,

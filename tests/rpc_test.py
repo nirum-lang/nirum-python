@@ -6,13 +6,12 @@ from six import text_type
 from werkzeug.test import Client as TestClient
 from werkzeug.wrappers import Response
 
+from .nirum_schema import import_nirum_fixture
 from nirum.exc import (InvalidNirumServiceMethodTypeError,
                        InvalidNirumServiceMethodNameError,
                        UnexpectedNirumResponseError)
 from nirum.rpc import Client, WsgiApp
 from nirum.test import MockOpener
-
-from .nirum_schema import import_nirum_fixture
 
 
 nf = import_nirum_fixture()
