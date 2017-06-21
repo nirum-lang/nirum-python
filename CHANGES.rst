@@ -14,6 +14,8 @@ To be released.
 - ``nirum.rpc.WsgiApp`` and its subtype became to raise ``TypeError`` with
   a better error message when its ``make_response()`` method is overridden and
   it returns a wrong artity of tuple.  [:issue:`80`]
+- Fixed a bug that ``Client.ping()`` method had always raised ``TypeError``.
+  [:issue:`80`]
 
 
 Version 0.5.0

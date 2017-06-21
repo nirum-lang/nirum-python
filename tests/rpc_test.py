@@ -333,6 +333,12 @@ def test_rpc_client_make_request(method_name):
         )
 
 
+def test_client_ping():
+    url = u'http://foobar.com/rpc/'
+    client = Client(url, MockOpener(url, MusicServiceImpl))
+    assert client.ping()
+
+
 @mark.parametrize('arity', [0, 1, 2, 3, 5])
 def test_client_make_request_arity_check(arity):
     class ExtendedClient(Client):
