@@ -32,7 +32,7 @@ JSONType = typing.Mapping[
 ]
 
 
-class Service:
+class Service(object):
     """Nirum RPC service."""
 
     __nirum_service_methods__ = {}
