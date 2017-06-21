@@ -4,10 +4,10 @@ import uuid
 
 from pytest import mark
 
+from .nirum_schema import import_nirum_fixture
 from nirum._compat import utc
 from nirum.serialize import (serialize_unboxed_type, serialize_record_type,
                              serialize_meta, serialize_union_type)
-from .nirum_schema import import_nirum_fixture
 
 
 nirum_fixture = import_nirum_fixture()

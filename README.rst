@@ -1,7 +1,7 @@
 nirum-python
 ============
 
-Python rumtime for Nirum_ IDL.  Distributed under MIT license.
+The Nirum_ runtime library for Python.  Distributed under MIT license.
 
 (You probably don't need directly use this package.)
 

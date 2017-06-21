@@ -6,6 +6,7 @@ Version 0.5.1
 
 To be released.
 
+- Added Python 3.6 support.
 - Wheel distributions (``nirum-*.whl``) are now universal between Python 2
   and 3.  [`#78`_]
 - ``nirum.rpc.Client`` and its subtype became to raise ``TypeError`` with

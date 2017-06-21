@@ -1,21 +1,21 @@
-import enum
-import typing
 import decimal
+import enum
 import json
+import typing
 import uuid
 
 from six import text_type
 
-from nirum.serialize import (serialize_record_type, serialize_unboxed_type,
-                             serialize_meta, serialize_union_type)
+from nirum.constructs import NameDict, name_dict_type
 from nirum.deserialize import (deserialize_record_type,
                                deserialize_unboxed_type,
                                deserialize_meta,
                                deserialize_union_type)
+from nirum.rpc import Client, Service
+from nirum.serialize import (serialize_record_type, serialize_unboxed_type,
+                             serialize_meta, serialize_union_type)
 from nirum.validate import (validate_unboxed_type, validate_record_type,
                             validate_union_type)
-from nirum.constructs import NameDict, name_dict_type
-from nirum.rpc import Client, Service
 
 
 class Offset(object):

@@ -2,7 +2,7 @@ import ast
 import re
 import sys
 
-from setuptools import find_packages, setup,  __version__ as setuptools_version
+from setuptools import find_packages, setup, __version__ as setuptools_version
 
 
 def readme(name='README.rst'):
@@ -39,10 +39,10 @@ install_requires = [
     'six', 'iso8601',
 ] + service_requires
 tests_require = [
-    'pytest >= 2.9.0',
-    'import-order',
-    'flake8',
-    'tox',
+    'pytest >= 3.1.2, < 4.0.0',
+    'pytest-flake8 >= 0.8.1, < 1.0.0',
+    'flake8-import-order >= 0.12, < 1.0',
+    'flake8-import-order-spoqa >= 1.0.0, < 2.0.0',
 ]
 docs_require = [
     'Sphinx',
@@ -77,7 +77,7 @@ else:
 setup(
     name='nirum',
     version=get_version(),
-    description='',
+    description='The Nirum runtime library for Python',
     long_description=readme(),
     url='https://github.com/spoqa/nirum-python',
     author='Kang Hyojun',
@@ -92,5 +92,18 @@ setup(
     },
     setup_requires=setup_requires,
     extras_require=extras_require,
-    classifiers=[]
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',
+        'Topic :: Software Development :: Code Generators',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: Software Development :: Object Brokering',
+    ]
 )

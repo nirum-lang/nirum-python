@@ -2,18 +2,18 @@ import collections
 import datetime
 import decimal
 import numbers
-import uuid
 import typing
+import uuid
 
 from pytest import raises, mark
 from six import PY3, text_type
 
 from nirum._compat import utc
-from nirum.serialize import serialize_record_type
 from nirum.deserialize import (deserialize_unboxed_type, deserialize_meta,
                                deserialize_tuple_type,
                                deserialize_record_type, deserialize_union_type,
                                deserialize_optional, deserialize_primitive)
+from nirum.serialize import serialize_record_type
 
 
 def test_deserialize_unboxed_type(fx_unboxed_type, fx_token_type):
