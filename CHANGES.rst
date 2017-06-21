@@ -33,7 +33,7 @@ To be released.
 Version 0.5.0
 -------------
 
-Release on June 1, 2017.
+Released on June 1, 2017.
 
 - Service methods became able to specify its error type. [`#71`_]
 - Added ``nirum-server`` command to run simply Nirum service.
@@ -44,7 +44,7 @@ Release on June 1, 2017.
 Version 0.4.1
 -------------
 
-Release on May 2, 2017.
+Released on May 2, 2017.
 
 - Compare type with its abstract type in ``nirum.validate.validate_type``.
 
@@ -52,7 +52,7 @@ Release on May 2, 2017.
 Version 0.4.0
 -------------
 
-Release on March 20, 2017.
+Released on March 20, 2017.
 
 - Encoding of map types was changed according to the `Nirum serialization
   specification`__.  [`#66`_]
