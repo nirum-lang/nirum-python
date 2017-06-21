@@ -7,6 +7,8 @@ Version 0.5.1
 To be released.
 
 - Added Python 3.6 support.
+- Fixed a bug that service client methods hadn't raised the proper error
+  type but ``nirum.exc.UnexpectedNirumResponseError`` instead.  [`#71`_]
 - Wheel distributions (``nirum-*.whl``) are now universal between Python 2
   and 3.  [`#78`_]
 - ``nirum.rpc.Service`` had been an old-style class on Python 2, but now

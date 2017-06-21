@@ -320,8 +320,11 @@ class Client:
         self.opener = opener
 
     def ping(self):
-        r = self.do_request(urllib.parse.urljoin(self.url, './ping/'), {})
-        return json.loads(r) == 'Ok'
+        status, _, __ = self.do_request(
+            urllib.parse.urljoin(self.url, './ping/'),
+            {}
+        )
+        return 200 <= status < 300
 
     def remote_call(self, method_name, payload={}):
         qs = urllib.parse.urlencode({'method': method_name})
@@ -329,7 +332,25 @@ class Client:
         request_url = urllib.parse.urlunsplit((
             scheme, netloc, path, qs, ''
         ))
-        return self.do_request(request_url, payload)
+        status, headers, content = self.do_request(request_url, payload)
+        content_type = headers.get('Content-Type', '').split(';', 1)[0].strip()
+        if content_type == 'application/json':
+            text = content.decode('utf-8')
+            if 200 <= status < 300:
+                return text
+            elif 400 <= status < 500:
+                error_types = getattr(type(self),
+                                      '__nirum_method_error_types__',
+                                      {})
+                try:
+                    error_type = error_types[method_name]
+                except KeyError:
+                    pass
+                else:
+                    error_data = json.loads(text)
+                    raise deserialize_meta(error_type, error_data)
+            raise UnexpectedNirumResponseError(text)
+        raise UnexpectedNirumResponseError(repr(text))
 
     def make_request(self, method, request_url, headers, payload):
         return (
@@ -394,11 +415,7 @@ class Client:
         for header_name, header_content in headers:
             request.add_header(header_name, header_content)
         response = self.opener.open(request, None)
-        response_text = response.read().decode('utf-8')
-        if 200 <= response.code < 300:
-            return response_text
-        else:
-            raise UnexpectedNirumResponseError(response_text)
+        return response.code, response.headers, response.read()
 
 
 # To eliminate imported vars from being overridden by

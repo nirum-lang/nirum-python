@@ -1,3 +1,4 @@
+import email
 import socket
 
 from six import PY3
@@ -18,6 +19,9 @@ class MockHttpResponse(HTTPResponse):
     def __init__(self, body, status_code):
         self.body = body
         self.code = status_code
+        self.headers = email.message_from_string(
+            'Content-Type: application/json\n'
+        )
         if PY3:
             self.status = status_code
 

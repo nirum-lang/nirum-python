@@ -1,4 +1,3 @@
-import contextlib
 import json
 
 from pytest import fixture, raises, mark
@@ -8,8 +7,7 @@ from werkzeug.wrappers import Response
 
 from .nirum_schema import import_nirum_fixture
 from nirum.exc import (InvalidNirumServiceMethodTypeError,
-                       InvalidNirumServiceMethodNameError,
-                       UnexpectedNirumResponseError)
+                       InvalidNirumServiceMethodNameError)
 from nirum.rpc import Client, WsgiApp
 from nirum.test import MockOpener
 
@@ -354,21 +352,10 @@ def test_client_make_request_arity_check(arity):
     )
 
 
-@contextlib.contextmanager
-def assert_error(error_type):
-    try:
-        yield
-    except UnexpectedNirumResponseError as e:
-        response_json = json.loads(str(e))
-        assert response_json == error_type().__nirum_serialize__()
-    else:
-        assert False  # MUST error raised
-
-
 def test_rpc_error_types():
     url = u'http://foobar.com/rpc/'
     client = nf.MusicServiceClient(url, MockOpener(url, MusicServiceImpl))
-    with assert_error(nf.Unknown):
+    with raises(nf.Unknown):
         client.get_music_by_artist_name('error')
-    with assert_error(nf.BadRequest):
+    with raises(nf.BadRequest):
         client.get_music_by_artist_name('adele')
