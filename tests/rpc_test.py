@@ -286,7 +286,7 @@ def test_rpc_client_error(url):
 
 
 @mark.parametrize('url', [u'http://foobar.com/', u'http://foobar.com/rpc/'])
-def test_rpc_client_service(monkeypatch, url):
+def test_rpc_client_service(url):
     client = nf.MusicServiceClient(url, MockOpener(url, MusicServiceImpl))
     nine_crimes = '9 crimes'
     damien_music = [nine_crimes, 'Elephant']
@@ -295,7 +295,7 @@ def test_rpc_client_service(monkeypatch, url):
     assert client.get_artist_by_music(nine_crimes) == damien_rice
 
 
-def test_rpc_mock_opener_null_app(monkeypatch):
+def test_rpc_mock_opener_null_app():
     url = u'http://foobar.com/rpc/'
     client = nf.MusicServiceClient(url, MockOpener(url, MusicServiceImpl))
     response = client.opener.wsgi_test_client.post('/')
@@ -303,7 +303,7 @@ def test_rpc_mock_opener_null_app(monkeypatch):
 
 
 @mark.parametrize('method_name', ['POST', 'post'])
-def test_rpc_client_make_request(method_name, monkeypatch):
+def test_rpc_client_make_request(method_name):
     naver = u'http://naver.com'
     payload = {'hello': 'world'}
     client = nf.MusicServiceClient(naver, MockOpener(naver, MusicServiceImpl))
