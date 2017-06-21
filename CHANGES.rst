@@ -4,7 +4,7 @@ Changelog
 Version 0.5.1
 -------------
 
-To be released.
+Released on June 22, 2017.
 
 - Added Python 3.6 support.
 - Fixed a bug that service client methods hadn't raised the proper error
