@@ -39,7 +39,7 @@ install_requires = [
     'six', 'iso8601',
 ] + service_requires
 tests_require = [
-    'pytest >= 2.9.0',
+    'pytest >= 3.1.2, < 4.0.0',
     'import-order',
     'flake8',
     'tox',
