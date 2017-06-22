@@ -4,7 +4,7 @@ Changelog
 Version 0.5.2
 -------------
 
-To be released.
+Released on June 23, 2017.
 
 - ``url`` of ``nirum.rpc.Client`` and
   ``method`` of ``nirum.rpc.Client.make_request``
