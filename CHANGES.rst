@@ -6,6 +6,10 @@ Version 0.6.0
 
 To be released.
 
+- Fixed ``NameError`` raised from forward references.  [`compiler #138`_]
+
+.. _compiler #138: https://github.com/spoqa/nirum/issues/138
+
 
 Version 0.5.1
 -------------

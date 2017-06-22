@@ -45,7 +45,7 @@ class MusicServiceImpl(nf.MusicService):
 class MusicServiceNameErrorImpl(nf.MusicService):
 
     __nirum_service_methods__ = {
-        'foo': {}
+        'foo': {'_v': 2}
     }
 
 
@@ -284,7 +284,7 @@ def test_rpc_client_error(url):
 
 @mark.parametrize('url', [u'http://foobar.com/', u'http://foobar.com/rpc/'])
 def test_rpc_client_service(url):
-    client = nf.MusicServiceClient(url, MockOpener(url, MusicServiceImpl))
+    client = nf.MusicService_Client(url, MockOpener(url, MusicServiceImpl))
     nine_crimes = '9 crimes'
     damien_music = [nine_crimes, 'Elephant']
     damien_rice = 'damien rice'
@@ -294,7 +294,7 @@ def test_rpc_client_service(url):
 
 def test_rpc_mock_opener_null_app():
     url = u'http://foobar.com/rpc/'
-    client = nf.MusicServiceClient(url, MockOpener(url, MusicServiceImpl))
+    client = nf.MusicService_Client(url, MockOpener(url, MusicServiceImpl))
     response = client.opener.wsgi_test_client.post('/')
     assert response.status_code == 404
 
@@ -303,7 +303,7 @@ def test_rpc_mock_opener_null_app():
 def test_rpc_client_make_request(method_name):
     naver = u'http://naver.com'
     payload = {'hello': 'world'}
-    client = nf.MusicServiceClient(naver, MockOpener(naver, MusicServiceImpl))
+    client = nf.MusicService_Client(naver, MockOpener(naver, MusicServiceImpl))
     actual_method, request_url, header, actual_payload = client.make_request(
         method_name,
         naver,
@@ -354,7 +354,7 @@ def test_client_make_request_arity_check(arity):
 
 def test_rpc_error_types():
     url = u'http://foobar.com/rpc/'
-    client = nf.MusicServiceClient(url, MockOpener(url, MusicServiceImpl))
+    client = nf.MusicService_Client(url, MockOpener(url, MusicServiceImpl))
     with raises(nf.Unknown):
         client.get_music_by_artist_name('error')
     with raises(nf.BadRequest):

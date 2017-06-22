@@ -197,10 +197,8 @@ def deserialize_meta(cls, data):
         d = deserialize_union_type(cls, data)
     elif hasattr(cls, '__nirum_record_behind_name__'):
         d = deserialize_record_type(cls, data)
-    elif (hasattr(cls, '__nirum_inner_type__') or
-          hasattr(cls, '__nirum_boxed_type__')):
-        # FIXME: __nirum_boxed_type__ is for backward compatibility;
-        #        remove __nirum_boxed_type__ in the near future
+    elif (hasattr(cls, '__nirum_get_inner_type__') or
+          hasattr(cls, '__nirum_inner_type__')):
         d = deserialize_unboxed_type(cls, data)
     elif type(cls) is typing.TupleMeta:
         # typing.Tuple dosen't have either `__origin__` and `__args__`
@@ -223,11 +221,11 @@ def deserialize_meta(cls, data):
 
 def deserialize_unboxed_type(cls, value):
     try:
-        inner_type = cls.__nirum_inner_type__
+        inner_type = cls.__nirum_get_inner_type__()
     except AttributeError:
-        # FIXME: __nirum_boxed_type__ is for backward compatibility;
-        #        remove __nirum_boxed_type__ in the near future
-        inner_type = cls.__nirum_boxed_type__
+        # FIXME: __nirum_inner_type__ is for backward compatibility;
+        #        remove __nirum_inner_type__ in the near future.
+        inner_type = cls.__nirum_inner_type__
     deserializer = getattr(inner_type, '__nirum_deserialize__', None)
     if deserializer:
         value = deserializer(value)
@@ -254,6 +252,10 @@ def deserialize_record_type(cls, value):
         )
     args = {}
     behind_names = cls.__nirum_field_names__.behind_names
+    field_types = cls.__nirum_field_types__
+    if callable(field_types):
+        field_types = field_types()
+        # old compiler could generate non-callable dictionary
     for attribute_name, item in value.items():
         if attribute_name == '_type':
             continue
@@ -261,7 +263,7 @@ def deserialize_record_type(cls, value):
             name = behind_names[attribute_name]
         else:
             name = attribute_name
-        args[name] = deserialize_meta(cls.__nirum_field_types__[name], item)
+        args[name] = deserialize_meta(field_types[name], item)
     return cls(**args)
 
 
@@ -300,5 +302,8 @@ def deserialize_union_type(cls, value):
             name = behind_names[attribute_name]
         else:
             name = attribute_name
-        args[name] = deserialize_meta(cls.__nirum_tag_types__[name], item)
+        tag_types = cls.__nirum_tag_types__
+        if callable(tag_types):  # old compiler could generate non-callable map
+            tag_types = dict(tag_types())
+        args[name] = deserialize_meta(tag_types[name], item)
     return cls(**args)
