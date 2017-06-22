@@ -7,7 +7,7 @@ import collections
 import json
 import typing
 
-from six import integer_types, text_type
+from six import integer_types, string_types
 from six.moves import urllib
 from werkzeug.exceptions import HTTPException
 from werkzeug.http import HTTP_STATUS_CODES
@@ -322,7 +322,7 @@ class WsgiApp:
         return WsgiResponse(content, status_code, headers, **kwargs)
 
 
-class Client:
+class Client(object):
 
     def __init__(self, url, opener=urllib.request.build_opener()):
         self.url = url_endswith_slash(url)
@@ -383,9 +383,9 @@ class Client:
                 repr(request_tuple)
             )
         http_method, request_url, headers, content = request_tuple
-        if not isinstance(request_url, text_type):
+        if not isinstance(request_url, string_types):
             raise TypeError(
-                '`request_url` have to be instance of text. not {}'.format(
+                '`request_url` have to be instance of string. not {}'.format(
                     typing._type_repr(type(request_url))
                 )
             )
@@ -401,9 +401,9 @@ class Client:
                     typing._type_repr(type(content))
                 )
             )
-        if not isinstance(http_method, text_type):
+        if not isinstance(http_method, string_types):
             raise TypeError(
-                '`method` have to be instance of text. not {}'.format(
+                '`method` have to be instance of string. not {}'.format(
                     typing._type_repr(type(http_method))
                 )
             )

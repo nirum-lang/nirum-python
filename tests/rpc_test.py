@@ -54,6 +54,19 @@ class MusicServiceTypeErrorImpl(nf.MusicService):
     get_music_by_artist_name = 1
 
 
+class MethodClient(Client):
+
+    def __init__(self, method, url, opener):
+        self.method = method
+        super(MethodClient, self).__init__(url, opener)
+
+    def make_request(self, _, request_url, headers, payload):
+        return (
+            self.method, request_url, headers,
+            json.dumps(payload).encode('utf-8')
+        )
+
+
 @mark.parametrize('impl, error_class', [
     (MusicServiceNameErrorImpl, InvalidNirumServiceMethodNameError),
     (MusicServiceTypeErrorImpl, InvalidNirumServiceMethodTypeError),
@@ -333,6 +346,23 @@ def test_rpc_client_make_request(method_name):
 def test_client_ping():
     url = u'http://foobar.com/rpc/'
     client = Client(url, MockOpener(url, MusicServiceImpl))
+    assert client.ping()
+
+
+@mark.parametrize(
+    'url',
+    [u'http://foobar.com/rpc/', 'http://foobar.com/rpc/']
+)
+def test_client_url(url):
+    client = Client(url, MockOpener(url, MusicServiceImpl))
+    assert client.ping()
+
+
+@mark.parametrize('method', [u'POST', 'POST'])
+def test_client_make_request_method_type(method):
+    url = 'http://test.com'
+    client = MethodClient(method, url,
+                          MockOpener(url, MusicServiceImpl))
     assert client.ping()
 
 
