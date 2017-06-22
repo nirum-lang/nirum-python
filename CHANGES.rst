@@ -6,7 +6,9 @@ Version 0.5.2
 
 To be released.
 
-- URL & method could be both unicode and str on python2.7. [`#87_`]
+- ``url`` of ``nirum.rpc.Client`` and
+  ``method`` of ``nirum.rpc.Client.make_request``
+  could be both unicode and str on python2.7. [`#87`_]
 
 .. _#87: https://github.com/spoqa/nirum-python/pull/87
 
