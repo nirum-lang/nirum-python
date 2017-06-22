@@ -6,6 +6,10 @@ Version 0.5.2
 
 To be released.
 
+- URL & method could be both unicode and str on python2.7. [`#87_`]
+
+.. _#87: https://github.com/spoqa/nirum-python/pull/87
+
 
 Version 0.5.1
 -------------
