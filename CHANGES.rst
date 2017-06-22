@@ -9,6 +9,9 @@ To be released.
 - ``url`` of ``nirum.rpc.Client`` and
   ``method`` of ``nirum.rpc.Client.make_request``
   now can be both ``unicode`` and ``str`` on Python 2.7. [`#87`_]
+- ``nirum.rpc.Client`` had been an old-style class on Python 2, but now
+  it became a new-style class also on Python 2. (As Python 3 has only new-style
+  class, there's no change on Python 3.)
 
 .. _#87: https://github.com/spoqa/nirum-python/pull/87
 
