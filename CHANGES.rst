@@ -8,7 +8,7 @@ To be released.
 
 - ``url`` of ``nirum.rpc.Client`` and
   ``method`` of ``nirum.rpc.Client.make_request``
-  could be both unicode and str on python2.7. [`#87`_]
+  now can be both ``unicode`` and ``str`` on Python 2.7. [`#87`_]
 
 .. _#87: https://github.com/spoqa/nirum-python/pull/87
 
