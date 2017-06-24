@@ -1,0 +1,5 @@
+version = "0.6.0"
+
+[targets.python]
+name = "nirum-schema-fixture"
+minimum_runtime = "0.6.0"

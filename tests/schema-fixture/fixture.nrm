@@ -1,0 +1,37 @@
+unboxed offset (float64);
+
+record point (
+    offset left/x,
+    offset top,
+);
+
+union shape
+    # Type constructors in a sum type become translated to subtypes in OO
+    # languages, and datatypes in functional languages.
+    = rectangle (point upper-left, point lower-right)
+    | circle (point origin, offset radius)
+    ;
+
+record location (
+    text? name,
+    decimal lat,
+    decimal lng
+);
+
+unboxed a (text);
+unboxed b (a);
+unboxed c (b);
+
+@error
+union hello-error = unknown | bad-request;
+
+service music-service (
+    [text] get-music-by-artist-name (text artist-name) throws hello-error,
+    text incorrect-return (),
+    text get-artist-by-music/find-artist (text music/norae),
+    text raise-application-error-request (),
+);
+
+unboxed token (uuid);
+
+record complex-key-map ({point: point} value);

@@ -1,7 +1,14 @@
 language: python
 python: [2.7, 3.4, 3.5, 3.6]
-install: pip install tox-travis
+env:
+- FIXTURE_PATH=/tmp/schema_fixture/
+install:
+- pip install tox-travis
+- mkdir "$HOME/bin"
+- curl -o "$HOME/bin/nirum" https://nightly-builds.nirum.org/travis-builds/nirum-linux-x86_64
+- chmod +x "$HOME/bin/nirum"
 script:
+- tox -e buildfixture
 - tox
 - tox -e docs
 - '[[ "$TRAVIS_TAG" = "" ]] || [[ "$TRAVIS_TAG" = "$(python setup.py --version)" ]]'
