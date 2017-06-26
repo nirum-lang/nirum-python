@@ -2,15 +2,12 @@ import datetime
 import decimal
 import uuid
 
+from fixture import ComplexKeyMap, Offset, Point
 from pytest import mark
 
-from .nirum_schema import import_nirum_fixture
 from nirum._compat import utc
 from nirum.serialize import (serialize_unboxed_type, serialize_record_type,
                              serialize_meta, serialize_union_type)
-
-
-nirum_fixture = import_nirum_fixture()
 
 
 def test_serialize_unboxed_type(fx_offset, fx_token_type):
@@ -104,9 +101,7 @@ def test_serialize_meta_set_of_record(fx_record_type, fx_unboxed_type,
 
 
 def test_serialize_meta_map(fx_point):
-    Point = nirum_fixture.Point
-    Offset = nirum_fixture.Offset
-    record = nirum_fixture.ComplexKeyMap(value={
+    record = ComplexKeyMap(value={
         fx_point: Point(left=Offset(1.23), top=Offset(4.56)),
         Point(left=Offset(1.23), top=Offset(4.56)):
             Point(left=Offset(7.89), top=Offset(10.11)),
