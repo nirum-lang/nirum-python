@@ -6,9 +6,36 @@ Version 0.6.0
 
 To be released.
 
+- Client transport layer.  [`#79`_]
+
+  - Added ``nirum.transport.Transport`` interface.
+
+    The recent builds of Nirum compiler became to generate ``*_Client`` classes
+    taking a ``nirum.transport.Transport`` instance through their constructor.
+
+    Use nirum-python-http_ (PyPI handle: ``nirum-http``) instead for HTTP
+    client of services e.g.:
+
+    .. code-block:: python
+
+       from yourservice import YourService_Client
+       from nirum_http import HttpTransport
+
+       transport = HttpTransport('https://service-host/')
+       client = YourService_Client(transport)
+
+  - Deprecated ``nirum.rpc.Client`` type.  The recent builds of Nirum compiler
+    became to generate ``*_Client`` classes for services without subclassing
+    ``nirum.rpc.Client``.
+
+    The deprecated ``nirum.rpc.Client`` will be completely obsolete at
+    version 0.7.0.
+
 - Fixed ``NameError`` raised from forward references.  [`compiler #138`_]
 
+.. _#79: https://github.com/spoqa/nirum-python/issues/79
 .. _compiler #138: https://github.com/spoqa/nirum/issues/138
+.. _nirum-python-http: https://github.com/spoqa/nirum-python-http
 
 
 Version 0.5.3

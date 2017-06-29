@@ -1,6 +1,6 @@
 import json
 
-from fixture import BadRequest, MusicService, MusicService_Client, Unknown
+from fixture import BadRequest, MusicService, Unknown
 from pytest import fixture, raises, mark
 from six import text_type
 from werkzeug.test import Client as TestClient
@@ -8,7 +8,9 @@ from werkzeug.wrappers import Response
 
 from nirum.exc import (InvalidNirumServiceMethodTypeError,
                        InvalidNirumServiceMethodNameError)
+from nirum.deserialize import deserialize_meta
 from nirum.rpc import Client, WsgiApp
+from nirum.serialize import serialize_meta
 from nirum.test import MockOpener
 
 
@@ -292,9 +294,64 @@ def test_rpc_client_error(url):
         Client(url)
 
 
+class MusicService_DeprecatedClient(Client, MusicService):
+    """Since the recent versions of Nirum compiler became to not generate
+    old-style clients like this anymore, we mimic them as a hard-coded fixture
+    here.
+
+    """
+
+    def get_music_by_artist_name(self, artist_name):
+        meta = self.__nirum_service_methods__['get_music_by_artist_name']
+        payload = {meta['_names']['artist_name']: serialize_meta(artist_name)}
+        return deserialize_meta(
+            meta['_return'](),
+            json.loads(
+                self.remote_call(
+                    self.__nirum_method_names__['get_music_by_artist_name'],
+                    payload=payload
+                )
+            )
+        )
+
+    def incorrect_return(self):
+        meta = self.__nirum_service_methods__['incorrect_return']
+        return deserialize_meta(
+            meta['_return'](),
+            json.loads(
+                self.remote_call(
+                    self.__nirum_method_names__['incorrect_return'],
+                    payload={}
+                )
+            )
+        )
+
+    def get_artist_by_music(self, music):
+        meta = self.__nirum_service_methods__['get_artist_by_music']
+        return deserialize_meta(
+            meta['_return'](),
+            json.loads(
+                self.remote_call(
+                    self.__nirum_method_names__['get_artist_by_music'],
+                    payload={meta['_names']['music']: serialize_meta(music)}
+                )
+            )
+        )
+
+    def raise_application_error_request(self):
+        met = self.__nirum_service_methods__['raise_application_error_request']
+        bname = self.__nirum_method_names__['raise_application_error_request']
+        return deserialize_meta(
+            met['_return'](),
+            json.loads(self.remote_call(bname, payload={}))
+        )
+
+
 @mark.parametrize('url', [u'http://foobar.com/', u'http://foobar.com/rpc/'])
 def test_rpc_client_service(url):
-    client = MusicService_Client(url, MockOpener(url, MusicServiceImpl))
+    client = MusicService_DeprecatedClient(
+        url, MockOpener(url, MusicServiceImpl)
+    )
     nine_crimes = '9 crimes'
     damien_music = [nine_crimes, 'Elephant']
     damien_rice = 'damien rice'
@@ -304,7 +361,9 @@ def test_rpc_client_service(url):
 
 def test_rpc_mock_opener_null_app():
     url = u'http://foobar.com/rpc/'
-    client = MusicService_Client(url, MockOpener(url, MusicServiceImpl))
+    client = MusicService_DeprecatedClient(
+        url, MockOpener(url, MusicServiceImpl)
+    )
     response = client.opener.wsgi_test_client.post('/')
     assert response.status_code == 404
 
@@ -313,7 +372,9 @@ def test_rpc_mock_opener_null_app():
 def test_rpc_client_make_request(method_name):
     naver = u'http://naver.com'
     payload = {'hello': 'world'}
-    client = MusicService_Client(naver, MockOpener(naver, MusicServiceImpl))
+    client = MusicService_DeprecatedClient(
+        naver, MockOpener(naver, MusicServiceImpl)
+    )
     actual_method, request_url, header, actual_payload = client.make_request(
         method_name,
         naver,
@@ -381,7 +442,9 @@ def test_client_make_request_arity_check(arity):
 
 def test_rpc_error_types():
     url = u'http://foobar.com/rpc/'
-    client = MusicService_Client(url, MockOpener(url, MusicServiceImpl))
+    client = MusicService_DeprecatedClient(
+        url, MockOpener(url, MusicServiceImpl)
+    )
     with raises(Unknown):
         client.get_music_by_artist_name('error')
     with raises(BadRequest):

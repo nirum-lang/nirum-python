@@ -6,6 +6,7 @@ import argparse
 import collections
 import json
 import typing
+import warnings
 
 from six import integer_types, string_types
 from six.moves import urllib
@@ -323,8 +324,23 @@ class WsgiApp:
 
 
 class Client(object):
+    """HTTP service client base class.
+
+    .. deprecated:: 0.6.0
+       Use :class:`nirum.transport.Transport` and
+       :mod:`nirum_http.HttpTransport` (provided by `nirum-http
+       <https://github.com/spoqa/nirum-python-http>` package) instead.
+       It will be completely obsolete at version 0.7.0.
+
+    """
 
     def __init__(self, url, opener=urllib.request.build_opener()):
+        warnings.warn(
+            'nirum.rpc.Client is deprecated; use nirum.transport.Transport '
+            'and nirum_http.HttpTransport (provided by nirum-http package) '
+            'instead.  It will be completely obsolete at version 0.7.0.',
+            DeprecationWarning
+        )
         self.url = url_endswith_slash(url)
         self.opener = opener
 
