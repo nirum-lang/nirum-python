@@ -1,6 +1,17 @@
 Changelog
 =========
 
+Version 0.4.2
+-------------
+
+To be released.
+
+- Fixed a serialization bug that other set-like (i.e. ``collections.Set``) types
+  than Python built-in ``set`` hadn't been reduced to simpler forms so that they
+  can be encoded to JSON.
+
+
+
 Version 0.4.1
 -------------
 

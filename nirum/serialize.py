@@ -66,7 +66,7 @@ def serialize_meta(data):
         d = data.isoformat()
     elif isinstance(data, decimal.Decimal) or isinstance(data, uuid.UUID):
         d = str(data)
-    elif isinstance(data, set) or isinstance(data, list):
+    elif isinstance(data, collections.Set) or isinstance(data, list):
         d = [serialize_meta(e) for e in data]
     elif isinstance(data, collections.Mapping):
         d = [
