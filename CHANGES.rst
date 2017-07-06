@@ -11,6 +11,19 @@ To be released.
 .. _compiler #138: https://github.com/spoqa/nirum/issues/138
 
 
+Version 0.5.3
+-------------
+
+Released on July 6, 2017.
+
+- Fixed a serialization bug that other set-like (i.e. ``collections.Set``) types
+  than Python built-in ``set`` hadn't been reduced to simpler forms so that they
+  can be encoded to JSON.
+- Fixed a serialization bug that other list-like (i.e. ``collections.Sequence``)
+  types than Python built-in ``list`` hadn't been reduced to simpler forms so
+  that they can be encoded to JSON.
+
+
 Version 0.5.2
 -------------
 
@@ -64,6 +77,19 @@ Released on June 1, 2017.
 - Added ``nirum-server`` command to run simply Nirum service.
 
 .. _#71: https://github.com/spoqa/nirum-python/issues/71
+
+
+Version 0.4.2
+-------------
+
+Released on July 6, 2017.
+
+- Fixed a serialization bug that other set-like (i.e. ``collections.Set``) types
+  than Python built-in ``set`` hadn't been reduced to simpler forms so that they
+  can be encoded to JSON.
+- Fixed a serialization bug that other list-like (i.e. ``collections.Sequence``)
+  types than Python built-in ``list`` hadn't been reduced to simpler forms so
+  that they can be encoded to JSON.
 
 
 Version 0.4.1

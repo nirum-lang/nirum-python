@@ -6,6 +6,7 @@ from fixture import ComplexKeyMap, Offset, Point
 from pytest import mark
 
 from nirum._compat import utc
+from nirum.datastructures import List
 from nirum.serialize import (serialize_unboxed_type, serialize_record_type,
                              serialize_meta, serialize_union_type)
 
@@ -91,6 +92,17 @@ def test_serialize_meta_set(d, expect):
         e in serialized
 
 
+def test_serialize_meta_list(fx_record_type, fx_unboxed_type, fx_offset):
+    record = fx_record_type(fx_offset, fx_offset)
+    record2 = fx_record_type(fx_unboxed_type(1.1), fx_unboxed_type(1.2))
+    serialize_result = serialize_meta([record, record2])
+    assert serialize_result == [
+        {'_type': 'point', 'x': 1.2, 'top': 1.2},
+        {'_type': 'point', 'x': 1.1, 'top': 1.2},
+    ]
+    assert serialize_meta(List([record, record2])) == serialize_result
+
+
 def test_serialize_meta_set_of_record(fx_record_type, fx_unboxed_type,
                                       fx_offset):
     record = fx_record_type(fx_offset, fx_offset)
@@ -98,6 +110,8 @@ def test_serialize_meta_set_of_record(fx_record_type, fx_unboxed_type,
     serialize_result = serialize_meta({record, record2})
     assert record.__nirum_serialize__() in serialize_result
     assert record2.__nirum_serialize__() in serialize_result
+    assert (sorted(serialize_meta(frozenset([record, record2])), key=repr) ==
+            sorted(serialize_result, key=repr))
 
 
 def test_serialize_meta_map(fx_point):
