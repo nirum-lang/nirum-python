@@ -7,6 +7,8 @@ import datetime
 import decimal
 import uuid
 
+from six import string_types
+
 __all__ = (
     'serialize_boxed_type', 'serialize_meta',
     'serialize_record_type', 'serialize_unboxed_type',
@@ -59,14 +61,18 @@ def serialize_union_type(data):
 def serialize_meta(data):
     if hasattr(data, '__nirum_serialize__'):
         d = data.__nirum_serialize__()
-    elif type(data) in {str, float, bool, int}:
+    elif isinstance(data, (string_types, bool, int, float)):
+        # FIXME: str in py2 represents binary string as well as text string.
+        # It should be refactored so that the function explicitly takes
+        # an expected type as like deserialize_meta() does.
         d = data
     elif (isinstance(data, datetime.datetime) or
             isinstance(data, datetime.date)):
         d = data.isoformat()
     elif isinstance(data, decimal.Decimal) or isinstance(data, uuid.UUID):
         d = str(data)
-    elif isinstance(data, set) or isinstance(data, list):
+    elif (isinstance(data, collections.Set) or
+          isinstance(data, collections.Sequence)):
         d = [serialize_meta(e) for e in data]
     elif isinstance(data, collections.Mapping):
         d = [
