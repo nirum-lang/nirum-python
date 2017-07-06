@@ -4,7 +4,7 @@ Changelog
 Version 0.4.2
 -------------
 
-To be released.
+Released on July 6, 2017.
 
 - Fixed a serialization bug that other set-like (i.e. ``collections.Set``) types
   than Python built-in ``set`` hadn't been reduced to simpler forms so that they
