@@ -31,6 +31,14 @@ To be released.
     The deprecated ``nirum.rpc.Client`` will be completely obsolete at
     version 0.7.0.
 
+- ``nirum.rpc.Service`` was moved to ``nirum.service.Service``.
+
+  The recent builds of Nirum compiler became to generate service classes
+  that inherit ``nirum.service.Service`` instead of ``nirum.rpc.Service``.
+
+  The deprecated ``nirum.rpc.Service`` will be completely obsolete at
+  version 0.7.0.
+
 - Fixed ``NameError`` raised from forward references.  [`compiler #138`_]
 
 .. _#79: https://github.com/spoqa/nirum-python/issues/79

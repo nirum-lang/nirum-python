@@ -16,15 +16,13 @@ from werkzeug.routing import Map, Rule
 from werkzeug.serving import run_simple
 from werkzeug.wrappers import Request as WsgiRequest, Response as WsgiResponse
 
-from .constructs import NameDict
 from .deserialize import deserialize_meta
-from .exc import (InvalidNirumServiceMethodNameError,
-                  InvalidNirumServiceMethodTypeError,
-                  NirumProcedureArgumentRequiredError,
+from .exc import (NirumProcedureArgumentRequiredError,
                   NirumProcedureArgumentValueError,
                   UnexpectedNirumResponseError)
 from .func import import_string, url_endswith_slash
 from .serialize import serialize_meta
+from .service import Service as BaseService
 
 __all__ = 'Client', 'WsgiApp', 'Service', 'client_type', 'service_type'
 JSONType = typing.Mapping[
@@ -32,32 +30,22 @@ JSONType = typing.Mapping[
 ]
 
 
-class Service(object):
-    """Nirum RPC service."""
+class Service(BaseService):
+    """Abstract base of Nirum services.
 
-    __nirum_service_methods__ = {}
-    __nirum_method_names__ = NameDict([])
+    .. deprecated:: 0.6.0
+       Use :class:`nirum.service.Service` instead.
+       It will be completely obsolete at version 0.7.0.
 
-    @staticmethod
-    def __nirum_method_error_types__(k, d=None):
-        return d
+    """
 
     def __init__(self):
-        for method_name in self.__nirum_service_methods__:
-            try:
-                method = getattr(self, method_name)
-            except AttributeError:
-                raise InvalidNirumServiceMethodNameError(
-                    "{0}.{1} inexist.".format(
-                        typing._type_repr(self.__class__), method_name
-                    )
-                )
-            if not callable(method):
-                raise InvalidNirumServiceMethodTypeError(
-                    "{0}.{1} isn't callable".format(
-                        typing._type_repr(self.__class__), method_name
-                    )
-                )
+        warnings.warn(
+            'nirum.rpc.Service is deprecated; use nirum.service.Service '
+            'instead.  It will be completely obsolete at version 0.7.0.',
+            DeprecationWarning
+        )
+        super(Service, self).__init__()
 
 
 class WsgiApp:

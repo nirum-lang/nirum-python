@@ -6,8 +6,6 @@ from six import text_type
 from werkzeug.test import Client as TestClient
 from werkzeug.wrappers import Response
 
-from nirum.exc import (InvalidNirumServiceMethodTypeError,
-                       InvalidNirumServiceMethodNameError)
 from nirum.deserialize import deserialize_meta
 from nirum.rpc import Client, WsgiApp
 from nirum.serialize import serialize_meta
@@ -41,18 +39,6 @@ class MusicServiceImpl(MusicService):
         raise ValueError('hello world')
 
 
-class MusicServiceNameErrorImpl(MusicService):
-
-    __nirum_service_methods__ = {
-        'foo': {'_v': 2}
-    }
-
-
-class MusicServiceTypeErrorImpl(MusicService):
-
-    get_music_by_artist_name = 1
-
-
 class MethodClient(Client):
 
     def __init__(self, method, url, opener):
@@ -64,15 +50,6 @@ class MethodClient(Client):
             self.method, request_url, headers,
             json.dumps(payload).encode('utf-8')
         )
-
-
-@mark.parametrize('impl, error_class', [
-    (MusicServiceNameErrorImpl, InvalidNirumServiceMethodNameError),
-    (MusicServiceTypeErrorImpl, InvalidNirumServiceMethodTypeError),
-])
-def test_service(impl, error_class):
-    with raises(error_class):
-        impl()
 
 
 @fixture
