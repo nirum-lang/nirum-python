@@ -53,6 +53,12 @@ class WsgiApp:
 
     :param service: A nirum service.
 
+    .. deprecated:: 0.6.0
+       Use ``nirum_wsgi.WsgiApp`` (provided by `nirum-wsgi
+       <https://github.com/spoqa/nirum-python-wsgi>`_ package) instead.
+
+       It will be completely obsolete at version 0.7.0.
+
     """
 
     #: (:class:`werkzeug.routing.Map`) url map
@@ -62,6 +68,12 @@ class WsgiApp:
     ])
 
     def __init__(self, service):
+        warnings.warn(
+            'nirum.rpc.WsgiApp is deprecated; use nirum_wsgi.WsgiApp '
+            '(provided by nirum-wsgi package).  It will be completely '
+            'obsolete at version 0.7.0.',
+            DeprecationWarning
+        )
         self.service = service
 
     def __call__(self, environ, start_response):

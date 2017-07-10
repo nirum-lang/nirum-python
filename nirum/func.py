@@ -27,6 +27,12 @@ def url_endswith_slash(url):
 
 
 def import_string(imp):
+    """Don't use this.
+
+    .. deprecated:: 0.6.0
+       It will be completely obsolete at version 0.7.0.
+
+    """
     m = IMPORT_RE.match(imp)
     if not m:
         raise ValueError(

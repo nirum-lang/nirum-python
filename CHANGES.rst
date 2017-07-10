@@ -39,11 +39,17 @@ To be released.
   The deprecated ``nirum.rpc.Service`` will be completely obsolete at
   version 0.7.0.
 
+- Deprecated ``nirum.rpc.WsgiApp``.  This will be completely obsolete at
+  version 0.7.0.
+
+  Use nirum-python-wsgi_ (PyPI handle: ``nirum-wsgi``) instead.
+
 - Fixed ``NameError`` raised from forward references.  [`compiler #138`_]
 
 .. _#79: https://github.com/spoqa/nirum-python/issues/79
 .. _compiler #138: https://github.com/spoqa/nirum/issues/138
 .. _nirum-python-http: https://github.com/spoqa/nirum-python-http
+.. _nirum-python-wsgi: https://github.com/spoqa/nirum-python-wsgi
 
 
 Version 0.5.3
