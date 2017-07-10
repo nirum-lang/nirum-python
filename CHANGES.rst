@@ -6,6 +6,14 @@ Version 0.6.0
 
 To be released.
 
+- Deprecated ``nirum.rpc`` module.
+
+  This module and all it has provided are deprecated or obsolete.  The most
+  of them are now distributed as separated packages, or replaced by a newer
+  concept.  See also the below for details.
+
+  It will be completely obsolete at version 0.7.0.
+
 - Client transport layer.  [`#79`_]
 
   - Added ``nirum.transport.Transport`` interface.
@@ -43,6 +51,12 @@ To be released.
   version 0.7.0.
 
   Use nirum-python-wsgi_ (PyPI handle: ``nirum-wsgi``) instead.
+
+- ``nirum-server`` command is obsolete.  The same command is now provided
+  by nirum-python-wsgi_ (PyPI handle: ``nirum-wsgi``), a separated package.
+
+- ``nirum.func.import_string()`` function and ``nirum.func.IMPORT_RE`` constant
+  are obsolete.
 
 - Fixed ``NameError`` raised from forward references.  [`compiler #138`_]
 

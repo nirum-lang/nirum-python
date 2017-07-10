@@ -1,8 +1,14 @@
 """:mod:`nirum.rpc`
 ~~~~~~~~~~~~~~~~~~~
 
+.. deprecated:: 0.6.0
+   This module and all it has provided are deprecated or obsolete.  The most
+   of them are now distributed as separated packages, or replaced by a newer
+   concept.
+
+   It will be completely obsolete at version 0.7.0.
+
 """
-import argparse
 import collections
 import json
 import typing
@@ -13,14 +19,13 @@ from six.moves import urllib
 from werkzeug.exceptions import HTTPException
 from werkzeug.http import HTTP_STATUS_CODES
 from werkzeug.routing import Map, Rule
-from werkzeug.serving import run_simple
 from werkzeug.wrappers import Request as WsgiRequest, Response as WsgiResponse
 
 from .deserialize import deserialize_meta
 from .exc import (NirumProcedureArgumentRequiredError,
                   NirumProcedureArgumentValueError,
                   UnexpectedNirumResponseError)
-from .func import import_string, url_endswith_slash
+from .func import url_endswith_slash
 from .serialize import serialize_meta
 from .service import Service as BaseService
 
@@ -447,21 +452,3 @@ class Client(object):
 # with postfix named `_type`
 service_type = Service
 client_type = Client
-
-
-def main():
-    parser = argparse.ArgumentParser(description='Nirum service runner')
-    parser.add_argument('-H', '--host', help='the host to listen',
-                        default='0.0.0.0')
-    parser.add_argument('-p', '--port', help='the port number to listen',
-                        type=int, default=9322)
-    parser.add_argument('-d', '--debug', help='debug mode',
-                        action='store_true', default=False)
-    parser.add_argument('service_impl', help='service implementation name')
-    args = parser.parse_args()
-    service_impl = import_string(args.service_impl)
-    run_simple(
-        args.host, args.port, WsgiApp(service_impl),
-        use_reloader=args.debug, use_debugger=args.debug,
-        use_evalex=args.debug
-    )
