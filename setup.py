@@ -31,13 +31,9 @@ def get_version():
 
 
 setup_requires = []
-service_requires = [
-    # FIXME Test Werkzeug 0.9, 0.10, 0.11 as well
-    'Werkzeug >= 0.11, < 1.0',
-]
 install_requires = [
     'six', 'iso8601',
-] + service_requires
+]
 tests_require = [
     'pytest >= 3.1.2, < 4.0.0',
     'pytest-flake8 >= 0.8.1, < 1.0.0',
@@ -48,7 +44,6 @@ docs_require = [
     'Sphinx',
 ]
 extras_require = {
-    'service': service_requires,
     'tests': tests_require,
     'docs': docs_require,
 }
