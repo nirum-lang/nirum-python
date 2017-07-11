@@ -6,9 +6,64 @@ Version 0.6.0
 
 To be released.
 
+- Deprecated ``nirum.rpc`` module.
+
+  This module and all it has provided are deprecated or obsolete.  The most
+  of them are now distributed as separated packages, or replaced by a newer
+  concept.  See also the below for details.
+
+  It will be completely obsolete at version 0.7.0.
+
+- Client transport layer.  [`#79`_]
+
+  - Added ``nirum.transport.Transport`` interface.
+
+    The recent builds of Nirum compiler became to generate ``*_Client`` classes
+    taking a ``nirum.transport.Transport`` instance through their constructor.
+
+    Use nirum-python-http_ (PyPI handle: ``nirum-http``) instead for HTTP
+    client of services e.g.:
+
+    .. code-block:: python
+
+       from yourservice import YourService_Client
+       from nirum_http import HttpTransport
+
+       transport = HttpTransport('https://service-host/')
+       client = YourService_Client(transport)
+
+  - Deprecated ``nirum.rpc.Client`` type.  The recent builds of Nirum compiler
+    became to generate ``*_Client`` classes for services without subclassing
+    ``nirum.rpc.Client``.
+
+    The deprecated ``nirum.rpc.Client`` will be completely obsolete at
+    version 0.7.0.
+
+- ``nirum.rpc.Service`` was moved to ``nirum.service.Service``.
+
+  The recent builds of Nirum compiler became to generate service classes
+  that inherit ``nirum.service.Service`` instead of ``nirum.rpc.Service``.
+
+  The deprecated ``nirum.rpc.Service`` will be completely obsolete at
+  version 0.7.0.
+
+- Deprecated ``nirum.rpc.WsgiApp``.  This will be completely obsolete at
+  version 0.7.0.
+
+  Use nirum-python-wsgi_ (PyPI handle: ``nirum-wsgi``) instead.
+
+- ``nirum-server`` command is obsolete.  The same command is now provided
+  by nirum-python-wsgi_ (PyPI handle: ``nirum-wsgi``), a separated package.
+
+- ``nirum.func.import_string()`` function and ``nirum.func.IMPORT_RE`` constant
+  are obsolete.
+
 - Fixed ``NameError`` raised from forward references.  [`compiler #138`_]
 
+.. _#79: https://github.com/spoqa/nirum-python/issues/79
 .. _compiler #138: https://github.com/spoqa/nirum/issues/138
+.. _nirum-python-http: https://github.com/spoqa/nirum-python-http
+.. _nirum-python-wsgi: https://github.com/spoqa/nirum-python-wsgi
 
 
 Version 0.5.3
