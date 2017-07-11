@@ -4,7 +4,7 @@ Changelog
 Version 0.6.0
 -------------
 
-To be released.
+Released on July 11, 2017.
 
 - Deprecated ``nirum.rpc`` module.
 
