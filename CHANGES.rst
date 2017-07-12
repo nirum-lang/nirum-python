@@ -6,6 +6,9 @@ Version 0.7.0
 
 To be released.
 
+- ``nirum.rpc`` module and ``Client``, ``Service``, and ``WsgiApp`` in
+  the module, had been deprecated since 0.6.0, are now completely obsolete.
+
 
 Version 0.6.0
 -------------
