@@ -7,8 +7,8 @@ from pytest import mark
 
 from nirum._compat import utc
 from nirum.datastructures import List
-from nirum.serialize import (serialize_unboxed_type, serialize_record_type,
-                             serialize_meta, serialize_union_type)
+from nirum.serialize import (serialize_meta, serialize_record_type,
+                             serialize_unboxed_type, serialize_union_type)
 
 
 def test_serialize_unboxed_type(fx_offset, fx_token_type):
@@ -29,14 +29,14 @@ def test_serialize_record_type(fx_point):
 
 def test_serialize_union_type(fx_point, fx_offset, fx_circle_type,
                               fx_rectangle_type):
-    circle = fx_circle_type(fx_point, fx_offset)
+    circle = fx_circle_type(origin=fx_point, radius=fx_offset)
     s = {
         '_type': 'shape', '_tag': 'circle',
         'origin': serialize_record_type(fx_point),
         'radius': serialize_unboxed_type(fx_offset)
     }
     assert serialize_union_type(circle) == s
-    rectangle = fx_rectangle_type(fx_point, fx_point)
+    rectangle = fx_rectangle_type(upper_left=fx_point, lower_right=fx_point)
     s = {
         '_type': 'shape', '_tag': 'rectangle',
         'upper_left': serialize_record_type(fx_point),
@@ -93,8 +93,9 @@ def test_serialize_meta_set(d, expect):
 
 
 def test_serialize_meta_list(fx_record_type, fx_unboxed_type, fx_offset):
-    record = fx_record_type(fx_offset, fx_offset)
-    record2 = fx_record_type(fx_unboxed_type(1.1), fx_unboxed_type(1.2))
+    record = fx_record_type(left=fx_offset, top=fx_offset)
+    record2 = fx_record_type(left=fx_unboxed_type(1.1),
+                             top=fx_unboxed_type(1.2))
     serialize_result = serialize_meta([record, record2])
     assert serialize_result == [
         {'_type': 'point', 'x': 1.2, 'top': 1.2},
@@ -105,8 +106,9 @@ def test_serialize_meta_list(fx_record_type, fx_unboxed_type, fx_offset):
 
 def test_serialize_meta_set_of_record(fx_record_type, fx_unboxed_type,
                                       fx_offset):
-    record = fx_record_type(fx_offset, fx_offset)
-    record2 = fx_record_type(fx_unboxed_type(1.1), fx_unboxed_type(1.2))
+    record = fx_record_type(left=fx_offset, top=fx_offset)
+    record2 = fx_record_type(left=fx_unboxed_type(1.1),
+                             top=fx_unboxed_type(1.2))
     serialize_result = serialize_meta({record, record2})
     assert record.__nirum_serialize__() in serialize_result
     assert record2.__nirum_serialize__() in serialize_result

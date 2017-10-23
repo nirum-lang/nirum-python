@@ -5,8 +5,8 @@
 import typing
 
 from .constructs import NameDict
-from .exc import (InvalidNirumServiceMethodTypeError,
-                  InvalidNirumServiceMethodNameError)
+from .exc import (InvalidNirumServiceMethodNameError,
+                  InvalidNirumServiceMethodTypeError)
 
 __all__ = 'Service',
 

@@ -4,7 +4,7 @@ env:
 - FIXTURE_PATH=/tmp/schema_fixture/
 install:
 - pip install tox-travis
-- mkdir "$HOME/bin"
+- mkdir -p "$HOME/bin"
 - curl -o "$HOME/bin/nirum" https://nightly-builds.nirum.org/travis-builds/nirum-linux-x86_64
 - chmod +x "$HOME/bin/nirum"
 script:

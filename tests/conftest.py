@@ -20,7 +20,8 @@ def fx_record_type():
 
 @fixture
 def fx_point(fx_record_type, fx_unboxed_type):
-    return fx_record_type(fx_unboxed_type(3.14), fx_unboxed_type(1.592))
+    return fx_record_type(left=fx_unboxed_type(3.14),
+                          top=fx_unboxed_type(1.592))
 
 
 @fixture
@@ -35,7 +36,7 @@ def fx_rectangle_type():
 
 @fixture
 def fx_rectangle(fx_rectangle_type, fx_point):
-    return fx_rectangle_type(fx_point, fx_point)
+    return fx_rectangle_type(upper_left=fx_point, lower_right=fx_point)
 
 
 @fixture
