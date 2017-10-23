@@ -1,9 +1,9 @@
 import json
 
 from fixture import BadRequest, MusicService, Unknown
-from pytest import fixture, raises, mark
+from pytest import fixture, mark, raises
 from six import text_type
-from werkzeug.test import Client as TestClient
+from werkzeug.test import Client as WTestClient
 from werkzeug.wrappers import Response
 
 from nirum.deserialize import deserialize_meta
@@ -59,7 +59,7 @@ def fx_music_wsgi():
 
 @fixture
 def fx_test_client(fx_music_wsgi):
-    return TestClient(fx_music_wsgi, Response)
+    return WTestClient(fx_music_wsgi, Response)
 
 
 def test_wsgi_app_ping(fx_music_wsgi, fx_test_client):
@@ -247,7 +247,7 @@ def test_wsgi_app_make_response_arity_check(arity):
         def make_response(self, status_code, headers, content):
             return (status_code, headers, content, None)[:arity]
     wsgi_app = ExtendedWsgiApp(MusicServiceImpl())
-    client = TestClient(wsgi_app, Response)
+    client = WTestClient(wsgi_app, Response)
     with raises(TypeError) as e:
         client.post('/?method=get_music_by_artist_name',
                     data=json.dumps({'artist_name': u'damien rice'}))

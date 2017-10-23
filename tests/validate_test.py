@@ -5,8 +5,8 @@ from pytest import raises
 from six import text_type
 
 from nirum.datastructures import List
-from nirum.validate import (validate_unboxed_type, validate_record_type,
-                            validate_union_type, validate_type)
+from nirum.validate import (validate_record_type, validate_type,
+                            validate_unboxed_type, validate_union_type)
 
 
 def test_validate_unboxed_type():

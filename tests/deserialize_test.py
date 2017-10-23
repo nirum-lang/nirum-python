@@ -5,14 +5,17 @@ import numbers
 import typing
 import uuid
 
-from pytest import raises, mark
+from pytest import mark, raises
 from six import PY3, text_type
 
 from nirum._compat import utc
-from nirum.deserialize import (deserialize_unboxed_type, deserialize_meta,
+from nirum.deserialize import (deserialize_meta,
+                               deserialize_optional,
+                               deserialize_primitive,
+                               deserialize_record_type,
                                deserialize_tuple_type,
-                               deserialize_record_type, deserialize_union_type,
-                               deserialize_optional, deserialize_primitive)
+                               deserialize_unboxed_type,
+                               deserialize_union_type)
 from nirum.serialize import serialize_record_type
 
 

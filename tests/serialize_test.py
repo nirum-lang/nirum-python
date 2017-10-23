@@ -7,8 +7,8 @@ from pytest import mark
 
 from nirum._compat import utc
 from nirum.datastructures import List
-from nirum.serialize import (serialize_unboxed_type, serialize_record_type,
-                             serialize_meta, serialize_union_type)
+from nirum.serialize import (serialize_meta, serialize_record_type,
+                             serialize_unboxed_type, serialize_union_type)
 
 
 def test_serialize_unboxed_type(fx_offset, fx_token_type):

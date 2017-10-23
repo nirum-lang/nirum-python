@@ -1,8 +1,8 @@
 from fixture import MusicService
 from pytest import mark, raises
 
-from nirum.exc import (InvalidNirumServiceMethodTypeError,
-                       InvalidNirumServiceMethodNameError)
+from nirum.exc import (InvalidNirumServiceMethodNameError,
+                       InvalidNirumServiceMethodTypeError)
 
 
 class MusicServiceNameErrorImpl(MusicService):
