@@ -53,26 +53,26 @@ class Map(collections.Mapping):
 
 class List(collections.Sequence):
 
-    def __init__(self, l):
-        self.l = l
+    def __init__(self, items):
+        self.items = items
 
     def __getitem__(self, index):
-        return self.l[index]
+        return self.items[index]
 
     def __len__(self):
-        return len(self.l)
+        return len(self.items)
 
     def __contains__(self, item):
-        return item in self.l
+        return item in self.items
 
     def __iter__(self):
-        return iter(self.l)
+        return iter(self.items)
 
     def index(self, item):
-        return self.l.index(item)
+        return self.items.index(item)
 
     def count(self, item):
-        return self.l.count(item)
+        return self.items.count(item)
 
 
 map_type = Map
