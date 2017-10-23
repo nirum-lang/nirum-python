@@ -1,13 +1,13 @@
 import json
 
-from pytest import fixture, raises, mark
+from pytest import fixture, mark, raises
 from six import text_type
 from werkzeug.test import Client as TestClient
 from werkzeug.wrappers import Response
 
 from .nirum_schema import import_nirum_fixture
-from nirum.exc import (InvalidNirumServiceMethodTypeError,
-                       InvalidNirumServiceMethodNameError)
+from nirum.exc import (InvalidNirumServiceMethodNameError,
+                       InvalidNirumServiceMethodTypeError)
 from nirum.rpc import Client, WsgiApp
 from nirum.test import MockOpener
 

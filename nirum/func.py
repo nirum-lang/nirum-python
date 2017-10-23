@@ -1,6 +1,6 @@
 import re
 
-from six.moves import urllib, reduce
+from six.moves import reduce, urllib
 
 __all__ = 'IMPORT_RE', 'import_string', 'url_endswith_slash'
 IMPORT_RE = re.compile(
