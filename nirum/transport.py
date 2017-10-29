@@ -32,21 +32,21 @@ class Transport(object):
             :class:`~typing.Sequence`, :class:`int`, :class:`float`,
             :class:`bool`, :const:`None`]]
         :param service_annotations: A mapping of annotations of the service.
-            The keys are normalized behind names of annotations.
-            The values are annotation value strings or :const:`None`
-            if an annotation has no value.
+            The keys are normalized names of annotations.
+            The values are mapping objects of annotation parameter names to
+            argument values.
         :type service_annotations: :class:`~typing.Mapping`\ [:class:`str`,
-            :class:`~typing.Optional`\ [:class:`str`]]
+            :class:`~typing.Mapping`\ [:class:`str`, :class:`str`]]
         :param method_annotations: A mapping of annotations of the method.
-            The keys are normalized behind names of annotations.
-            The values are annotation value strings or :const:`None`
-            if an annotation has no value.
+            The keys are normalized names of annotations.
+            The values are mapping objects of annotation parameter names to
+            argument values.
         :type method_annotations: :class:`~typing.Mapping`\ [:class:`str`,
-            :class:`~typing.Optional`\ [:class:`str`]]
+            :class:`~typing.Mapping`\ [:class:`str`, :class:`str`]]
         :param parameter_annotations: A mapping of parameter annotations.
             Its structure is similar to ``service_annotations`` and
             ``method_annotations`` except it's one more level nested.
-            The keys are normalized behind names of parameters.
+            The keys are normalized names of parameters.
             The values are the annotation mappings of their corresponding
             parameter.
         :type parameter_annotations: :class:`~typing.Mapping`\ [:class:`str`,
