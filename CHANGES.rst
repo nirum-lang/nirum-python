@@ -8,6 +8,9 @@ To be released.
 
 - ``nirum.rpc`` module and ``Client``, ``Service``, and ``WsgiApp`` in
   the module, had been deprecated since 0.6.0, are now completely obsolete.
+- Annotation parameters (``service_annotations``, ``method_annotations``, and
+  ``parameter_annotations``) of ``nirum.transport.Transport.call()`` method
+  now can take multiple arguments.
 
 
 Version 0.6.0
