@@ -193,11 +193,12 @@ def deserialize_optional(cls, data):
 
 
 def deserialize_meta(cls, data):
-    if hasattr(cls, '__nirum_tag__') or hasattr(cls, 'Tag'):
+    t = getattr(cls, '__nirum_type__', None)
+    if t == 'union' or hasattr(cls, '__nirum_tag__') or hasattr(cls, 'Tag'):
         d = deserialize_union_type(cls, data)
-    elif hasattr(cls, '__nirum_record_behind_name__'):
+    elif t == 'record' or hasattr(cls, '__nirum_record_behind_name__'):
         d = deserialize_record_type(cls, data)
-    elif (hasattr(cls, '__nirum_get_inner_type__') or
+    elif (t == 'unboxed' or hasattr(cls, '__nirum_get_inner_type__') or
           hasattr(cls, '__nirum_inner_type__')):
         d = deserialize_unboxed_type(cls, data)
     elif type(cls) is typing.TupleMeta:
