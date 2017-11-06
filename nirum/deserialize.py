@@ -274,16 +274,30 @@ def deserialize_union_type(cls, value):
     if '_tag' not in value:
         raise ValueError('"_tag" field is missing.')
     if not hasattr(cls, '__nirum_tag__'):
-        for sub_cls in cls.__subclasses__():
-            if sub_cls.__nirum_tag__.value == value['_tag']:
-                cls = sub_cls
-                break
-        else:
-            raise ValueError(
-                '{0!r} is not deserialzable tag of `{1}`.'.format(
-                    value, typing._type_repr(cls)
+        if hasattr(cls, '__nirum_tag_classes__'):
+            tag = cls.Tag(value['_tag'])
+            try:
+                cls = cls.__nirum_tag_classes__[tag]
+            except KeyError:
+                raise ValueError(
+                    '{0!r} is not deserialzable tag of {1} ({2!r})'.format(
+                        value, typing._type_repr(cls), tag
+                    )
                 )
-            )
+        else:
+            # FIXME: This fallback for backward compatibility should be removed
+            # in the future releases.
+            # See also: https://github.com/spoqa/nirum/pull/192
+            for sub_cls in cls.__subclasses__():
+                if sub_cls.__nirum_tag__.value == value['_tag']:
+                    cls = sub_cls
+                    break
+            else:
+                raise ValueError(
+                    '{0!r} is not deserialzable tag of {1}'.format(
+                        value, typing._type_repr(cls)
+                    )
+                )
     if not cls.__nirum_union_behind_name__ == value['_type']:
         raise ValueError('{0} expect "_type" equal to'
                          ' "{1.__nirum_union_behind_name__}"'
