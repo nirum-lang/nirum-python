@@ -40,7 +40,7 @@ install_requires = [
 ] + service_requires
 tests_require = [
     'pytest >= 3.1.2, < 4.0.0',
-    'pytest-flake8 >= 0.8.1, < 1.0.0',
+    'pytest-flake8 >= 0.9.1, < 1.0.0',
     'flake8-import-order >= 0.12, < 1.0',
     'flake8-import-order-spoqa >= 1.0.1, < 2.0.0',
 ]
