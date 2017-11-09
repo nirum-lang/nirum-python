@@ -11,6 +11,17 @@ To be released.
 - Annotation parameters (``service_annotations``, ``method_annotations``, and
   ``parameter_annotations``) of ``nirum.transport.Transport.call()`` method
   now can take multiple arguments.
+- Since Nirum compiler became to give ``__nirum_type__`` attribute to
+  every generated clasess (see also the `pull request`__),
+  ``nirum.deserialize.deserialize_meta()`` function also became to leverage
+  it if present.
+- Since Nirum compiler became to give ``__nirum_tag_classes__`` mapping to
+  every generated union classes (see also the `pull request`__),
+  ``nirum.deserialize.deserialize_union_type()`` function also became to
+  lerverage it if present.
+
+__ https://github.com/spoqa/nirum/pull/192
+__ https://github.com/spoqa/nirum/pull/192
 
 
 Version 0.6.0
