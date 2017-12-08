@@ -6,6 +6,9 @@ Version 0.5.4
 
 To be released.
 
+- Made `nirum.datastructures.List` to copy the given value so that
+  it doesn't refer given value's state and is immutable.
+
 
 Version 0.5.3
 -------------
