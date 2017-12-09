@@ -88,3 +88,12 @@ def test_list():
     assert immutable_list.count(1) == 1
     assert immutable_list.count(2) == 1
     assert immutable_list.count(3) == 0
+
+
+def test_list_immutable():
+    mutable_list = [1, 2]
+    immutable_list = List(mutable_list)
+    mutable_list.append(3)
+    assert immutable_list.items != mutable_list
+    assert immutable_list.items == [1, 2]
+    assert mutable_list == [1, 2, 3]
