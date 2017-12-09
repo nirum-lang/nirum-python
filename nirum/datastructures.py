@@ -54,7 +54,7 @@ class Map(collections.Mapping):
 class List(collections.Sequence):
 
     def __init__(self, items):
-        self.items = items
+        self.items = list(items)
 
     def __getitem__(self, index):
         return self.items[index]

@@ -4,7 +4,10 @@ Changelog
 Version 0.6.1
 -------------
 
-To be released.
+To be released
+
+- Made `nirum.datastructures.List` to copy the given value so that
+  it doesn't refer given value's state and is immutable.
 
 
 Version 0.6.0
@@ -70,6 +73,15 @@ Released on July 11, 2017.
 .. _compiler #138: https://github.com/spoqa/nirum/issues/138
 .. _nirum-python-http: https://github.com/spoqa/nirum-python-http
 .. _nirum-python-wsgi: https://github.com/spoqa/nirum-python-wsgi
+
+
+Version 0.5.4
+-------------
+
+Released on December 9, 2017.
+
+- Made `nirum.datastructures.List` to copy the given value so that
+  it doesn't refer given value's state and is immutable.
 
 
 Version 0.5.3
