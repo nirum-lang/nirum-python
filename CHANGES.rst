@@ -6,13 +6,15 @@ Version 0.6.2
 
 To be released.
 
+- Added ``is_optional_type()`` to ensure optional type includes ``None`` type.
+
 
 Version 0.6.1
 -------------
 
 Released on December 9, 2017.
 
-- Made `nirum.datastructures.List` to copy the given value so that
+- Made ``nirum.datastructures.List`` to copy the given value so that
   it doesn't refer given value's state and is immutable.
 
 
