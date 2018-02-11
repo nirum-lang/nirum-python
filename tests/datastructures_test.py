@@ -97,3 +97,9 @@ def test_list_immutable():
     assert immutable_list.items != mutable_list
     assert immutable_list.items == [1, 2]
     assert mutable_list == [1, 2, 3]
+
+
+def test_list_repr():
+    assert repr(List([])) == 'nirum.datastructures.List([])'
+    assert repr(List([1])) == 'nirum.datastructures.List([1])'
+    assert repr(List([1, 2])) == 'nirum.datastructures.List([1, 2])'

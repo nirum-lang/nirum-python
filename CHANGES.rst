@@ -7,6 +7,11 @@ Version 0.6.2
 To be released.
 
 - Added ``is_optional_type()`` to ensure optional type includes ``None`` type.
+- ``nirum.datastructures.List`` became to show its contents when it's passed
+  to ``repr()``.  [`#103`__, `#108`__ by Chang-soo Han]
+
+__ https://github.com/spoqa/nirum-python/issues/103
+__ https://github.com/spoqa/nirum-python/pull/108
 
 
 Version 0.6.1
