@@ -4,7 +4,7 @@ Changelog
 Version 0.6.2
 -------------
 
-To be released.
+Released on February 11, 2018.
 
 - Added ``is_optional_type()`` to ensure optional type includes ``None`` type.
 - ``nirum.datastructures.List`` became to show its contents when it's passed
