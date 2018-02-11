@@ -13,7 +13,7 @@ import uuid
 from iso8601 import iso8601, parse_date
 from six import text_type
 
-from ._compat import get_tuple_param_types, get_union_types, is_union_type
+from ._compat import get_tuple_param_types, get_union_types, is_optional_type
 from .datastructures import Map
 
 __all__ = (
@@ -175,9 +175,9 @@ def deserialize_primitive(cls, data):
 
 
 def deserialize_optional(cls, data):
+    if not is_optional_type(cls):
+        raise ValueError('{!r} is not optional type'.format(cls))
     union_types = get_union_types(cls)
-    if not any(isinstance(None, ut) for ut in union_types):
-        raise ValueError(cls)
     if data is None:
         return data
     for union_type in union_types:
@@ -207,7 +207,7 @@ def deserialize_meta(cls, data):
         d = deserialize_tuple_type(cls, data)
     elif is_support_abstract_type(cls):
         d = deserialize_abstract_type(cls, data)
-    elif is_union_type(cls):
+    elif is_optional_type(cls):
         d = deserialize_optional(cls, data)
     elif callable(cls) and cls in _NIRUM_PRIMITIVE_TYPE:
         d = deserialize_primitive(cls, data)

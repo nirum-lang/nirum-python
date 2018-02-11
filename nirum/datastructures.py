@@ -74,6 +74,10 @@ class List(collections.Sequence):
     def count(self, item):
         return self.items.count(item)
 
+    def __repr__(self):
+        args = repr(self.items)
+        return '{0.__module__}.{0.__name__}({1})'.format(type(self), args)
+
 
 map_type = Map
 list_type = List

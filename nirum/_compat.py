@@ -1,7 +1,7 @@
 import datetime
 import typing
 
-__all__ = 'utc', 'is_union_type', 'get_union_types'
+__all__ = 'utc', 'is_optional_type', 'is_union_type', 'get_union_types'
 
 
 try:
@@ -41,6 +41,10 @@ else:
             return type_.__union_params__ \
                 if hasattr(type_, '__union_params__') \
                 else type_.__args__
+
+
+def is_optional_type(type_):
+    return is_union_type(type_) and type(None) in get_union_types(type_)
 
 
 def get_abstract_param_types(type_):

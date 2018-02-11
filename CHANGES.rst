@@ -24,12 +24,25 @@ __ https://github.com/spoqa/nirum/pull/192
 __ https://github.com/spoqa/nirum/pull/192
 
 
+Version 0.6.2
+-------------
+
+Released on February 11, 2018.
+
+- Added ``is_optional_type()`` to ensure optional type includes ``None`` type.
+- ``nirum.datastructures.List`` became to show its contents when it's passed
+  to ``repr()``.  [`#103`__, `#108`__ by Chang-soo Han]
+
+__ https://github.com/spoqa/nirum-python/issues/103
+__ https://github.com/spoqa/nirum-python/pull/108
+
+
 Version 0.6.1
 -------------
 
 Released on December 9, 2017.
 
-- Made `nirum.datastructures.List` to copy the given value so that
+- Made ``nirum.datastructures.List`` to copy the given value so that
   it doesn't refer given value's state and is immutable.
 
 
