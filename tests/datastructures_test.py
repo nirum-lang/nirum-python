@@ -20,6 +20,31 @@ def test_map_init():
     assert not isinstance(Map(), collections.MutableMapping)
 
 
+def test_map_equality(fx_record_type, fx_unboxed_type):
+    Point = fx_record_type
+    Offset = fx_unboxed_type
+    a = Map([
+        (Offset(1.), Point(left=Offset(1.), top=Offset(2.0))),
+        (Offset(3.), Point(left=Offset(3.), top=Offset(4.0))),
+    ])
+    b = Map([
+        (Offset(1.), Point(left=Offset(1.), top=Offset(2.0))),
+        (Offset(3.), Point(left=Offset(3.), top=Offset(4.0))),
+    ])
+    c = Map([
+        (Offset(1.), Point(left=Offset(1.), top=Offset(2.0))),
+        (Offset(3.), Point(left=Offset(3.), top=Offset(5.0))),
+    ])
+    assert a == b
+    assert not (a != b)
+    assert hash(a) == hash(b)
+    assert b != c
+    assert not (b == c)
+    assert hash(b) != hash(c)
+    assert a != c
+    assert not (a == c)
+
+
 def test_map_iter():
     assert list(Map()) == []
     assert list(Map(a=1)) == ['a']
@@ -88,3 +113,28 @@ def test_list():
     assert immutable_list.count(1) == 1
     assert immutable_list.count(2) == 1
     assert immutable_list.count(3) == 0
+
+
+def test_list_equality(fx_record_type, fx_unboxed_type):
+    Point = fx_record_type
+    Offset = fx_unboxed_type
+    a = List([
+        Point(left=Offset(1.), top=Offset(2.)),
+        Point(left=Offset(3.), top=Offset(4.)),
+    ])
+    b = List([
+        Point(left=Offset(1.), top=Offset(2.)),
+        Point(left=Offset(3.), top=Offset(4.)),
+    ])
+    c = List([
+        Point(left=Offset(1.), top=Offset(2.)),
+        Point(left=Offset(3.), top=Offset(5.)),
+    ])
+    assert a == b
+    assert not (a != b)
+    assert hash(a) == hash(b)
+    assert b != c
+    assert not (b == c)
+    assert hash(b) != hash(c)
+    assert a != c
+    assert not (a == c)

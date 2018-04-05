@@ -21,6 +21,19 @@ class Map(collections.Mapping):
         # TODO: type check on elements
         self.value = dict(*args, **kwargs)
 
+    def __eq__(self, other):
+        if not (isinstance(other, collections.Mapping) and
+                len(self.value) == len(other)):
+            return False
+        for k, v in self.items():
+            if k in other and other[k] == v:
+                continue
+            return False
+        return True
+
+    def __ne__(self, other):
+        return not (self == other)
+
     def __iter__(self):
         return iter(self.value)
 
@@ -41,6 +54,9 @@ class Map(collections.Mapping):
 
     __nonzero__ = __bool__
 
+    def __hash__(self):
+        return hash(tuple(self.items()))
+
     def __repr__(self):
         if self:
             items = sorted(self.value.items())
@@ -54,7 +70,20 @@ class Map(collections.Mapping):
 class List(collections.Sequence):
 
     def __init__(self, l):
-        self.l = l
+        self.l = l  # noqa: E741
+
+    def __eq__(self, other):
+        if not (isinstance(other, collections.Sequence) and
+                len(self) == len(other)):
+            return False
+        for a, b in zip(self, other):
+            if a == b:
+                continue
+            return False
+        return True
+
+    def __ne__(self, other):
+        return not (self == other)
 
     def __getitem__(self, index):
         return self.l[index]
@@ -67,6 +96,9 @@ class List(collections.Sequence):
 
     def __iter__(self):
         return iter(self.l)
+
+    def __hash__(self):
+        return hash(tuple(self))
 
     def index(self, item):
         return self.l.index(item)
