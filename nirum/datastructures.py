@@ -98,7 +98,7 @@ class List(collections.Sequence):
         return iter(self.items)
 
     def __hash__(self):
-        return hash(self.items)
+        return hash(tuple(self.items))
 
     def index(self, item):
         return self.items.index(item)

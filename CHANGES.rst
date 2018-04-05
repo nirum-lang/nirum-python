@@ -6,6 +6,9 @@ Version 0.5.6
 
 To be released.
 
+- Fixed a bug that ``hash()`` on ``nirum.datastructures.List`` had raised
+  ``TypeError``.
+
 
 Version 0.5.5
 -------------
@@ -104,8 +107,6 @@ Released on April 5, 2018.
 - Added missing equality functions (i.e., ``==``, ``!=`` operators, & ``hash()``
   function) to ``nirum.datastructures.Map`` and ``nirum.datastructures.List``.
   [`#110`_]
-
-.. _#110: https://github.com/spoqa/nirum-python/issues/110
 
 
 Version 0.4.2
