@@ -4,7 +4,7 @@ Changelog
 Version 0.5.6
 -------------
 
-To be released.
+Released on April 5, 2018.
 
 - Fixed a bug that ``hash()`` on ``nirum.datastructures.List`` had raised
   ``TypeError``.
