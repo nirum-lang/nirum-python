@@ -4,7 +4,7 @@ Changelog
 Version 0.6.3
 -------------
 
-To be released.
+Released on April 5, 2018.
 
 - Added missing equality functions (i.e., ``==``, ``!=`` operators, & ``hash()``
   function) to ``nirum.datastructures.Map`` and ``nirum.datastructures.List``.
