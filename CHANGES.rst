@@ -6,6 +6,12 @@ Version 0.4.3
 
 To be released.
 
+- Added missing equality functions (i.e., ``==``, ``!=`` operators, & ``hash()``
+  function) to ``nirum.datastructures.Map`` and ``nirum.datastructures.List``.
+  [`#110`_]
+
+.. _#110: https://github.com/spoqa/nirum-python/issues/110
+
 
 Version 0.4.2
 -------------
