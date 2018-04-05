@@ -12,7 +12,7 @@ To be released.
   ``parameter_annotations``) of ``nirum.transport.Transport.call()`` method
   now can take multiple arguments.
 - Since Nirum compiler became to give ``__nirum_type__`` attribute to
-  every generated clasess (see also the `pull request`__),
+  every generated classes (see also the `pull request`__),
   ``nirum.deserialize.deserialize_meta()`` function also became to leverage
   it if present.
 - Since Nirum compiler became to give ``__nirum_tag_classes__`` mapping to
@@ -22,6 +22,16 @@ To be released.
 
 __ https://github.com/spoqa/nirum/pull/192
 __ https://github.com/spoqa/nirum/pull/192
+
+
+Version 0.6.3
+-------------
+
+Released on April 5, 2018.
+
+- Added missing equality functions (i.e., ``==``, ``!=`` operators, & ``hash()``
+  function) to ``nirum.datastructures.Map`` and ``nirum.datastructures.List``.
+  [`#110`_]
 
 
 Version 0.6.2
@@ -111,12 +121,33 @@ Released on July 11, 2017.
 .. _nirum-python-wsgi: https://github.com/spoqa/nirum-python-wsgi
 
 
+Version 0.5.6
+-------------
+
+Released on April 5, 2018.
+
+- Fixed a bug that ``hash()`` on ``nirum.datastructures.List`` had raised
+  ``TypeError``.
+
+
+Version 0.5.5
+-------------
+
+Released on April 5, 2018.
+
+- Added missing equality functions (i.e., ``==``, ``!=`` operators, & ``hash()``
+  function) to ``nirum.datastructures.Map`` and ``nirum.datastructures.List``.
+  [`#110`_]
+
+.. _#110: https://github.com/spoqa/nirum-python/issues/110
+
+
 Version 0.5.4
 -------------
 
 Released on December 9, 2017.
 
-- Made `nirum.datastructures.List` to copy the given value so that
+- Made ``nirum.datastructures.List`` to copy the given value so that
   it doesn't refer given value's state and is immutable.
 
 
@@ -188,6 +219,16 @@ Released on June 1, 2017.
 .. _#71: https://github.com/spoqa/nirum-python/issues/71
 
 
+Version 0.4.3
+-------------
+
+Released on April 5, 2018.
+
+- Added missing equality functions (i.e., ``==``, ``!=`` operators, & ``hash()``
+  function) to ``nirum.datastructures.Map`` and ``nirum.datastructures.List``.
+  [`#110`_]
+
+
 Version 0.4.2
 -------------
 
@@ -224,6 +265,6 @@ Released on March 20, 2017.
   ``nirum.datastructures.List`` as ``list_type`` to avoid name
   conflict with user-defined types.
 
+__ https://github.com/spoqa/nirum/blob/f1629787f45fef17eeab8b4f030c34580e0446b8/docs/serialization.md
 .. _#66: https://github.com/spoqa/nirum-python/pull/66
 .. _#49: https://github.com/spoqa/nirum-python/issues/49
-__ https://github.com/spoqa/nirum/blob/f1629787f45fef17eeab8b4f030c34580e0446b8/docs/serialization.md
