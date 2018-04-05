@@ -32,7 +32,7 @@ Version 0.4.1
 
 Release on May 2, 2017.
 
-- Compare type with its abstract type in :func:`nirum.validate.validate_type`.
+- Compare type with its abstract type in ``nirum.validate.validate_type``.
 
 
 Version 0.4.0
@@ -41,15 +41,14 @@ Version 0.4.0
 Release on March 20, 2017.
 
 - Encoding of map types was changed according to the `Nirum serialization
-  specification`__.  [:issue:`66`]
-- Added :mod:`nirum.datastructures` module and
-  :class:`~nirum.datastructures.Map` which is an immutable dictionary.
-  [:issue:`66`]
-- Added :class:`nirum.datastructures.List` which is an immutable list.
-  [:issue:`49`]
-- Aliased :class:`~nirum.datastructures.Map` as ``map_type``, and
-  :class:`~nirum.datastructures.List` as ``list_type`` to avoid name
+  specification`__.  [`#66`_]
+- Added ``nirum.datastructures`` module and ``nirum.datastructures.Map``
+  which is an immutable dictionary.  [`#66`_]
+- Added ``nirum.datastructures.List`` which is an immutable list.  [`#49`_]
+- Aliased ``nirum.datastructures.Map`` as ``map_type``, and
+  ``nirum.datastructures.List`` as ``list_type`` to avoid name
   conflict with user-defined types.
 
-
 __ https://github.com/spoqa/nirum/blob/f1629787f45fef17eeab8b4f030c34580e0446b8/docs/serialization.md
+.. _#66: https://github.com/spoqa/nirum-python/pull/66
+.. _#49: https://github.com/spoqa/nirum-python/issues/49
