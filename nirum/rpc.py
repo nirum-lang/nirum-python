@@ -60,7 +60,7 @@ class WsgiApp:
 
     .. deprecated:: 0.6.0
        Use ``nirum_wsgi.WsgiApp`` (provided by `nirum-wsgi
-       <https://github.com/spoqa/nirum-python-wsgi>`_ package) instead.
+       <https://github.com/nirum-lang/nirum-python-wsgi>`_ package) instead.
 
        It will be completely obsolete at version 0.7.0.
 
@@ -334,7 +334,7 @@ class Client(object):
     .. deprecated:: 0.6.0
        Use :class:`nirum.transport.Transport` and
        :mod:`nirum_http.HttpTransport` (provided by `nirum-http
-       <https://github.com/spoqa/nirum-python-http>` package) instead.
+       <https://github.com/nirum-lang/nirum-python-http>` package) instead.
        It will be completely obsolete at version 0.7.0.
 
     """
