@@ -68,7 +68,7 @@ class Transport(object):
            Every transport has to implement this method.
 
         .. _serialization-format: \
-https://github.com/spoqa/nirum/blob/master/docs/serialization.md
+https://github.com/nirum-lang/nirum/blob/master/docs/serialization.md
 
         """
         raise NotImplementedError('Transport has to implement call() method')

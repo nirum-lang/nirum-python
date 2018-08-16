@@ -26,8 +26,8 @@ Released on February 11, 2018.
 - ``nirum.datastructures.List`` became to show its contents when it's passed
   to ``repr()``.  [`#103`__, `#108`__ by Chang-soo Han]
 
-__ https://github.com/spoqa/nirum-python/issues/103
-__ https://github.com/spoqa/nirum-python/pull/108
+__ https://github.com/nirum-lang/nirum-python/issues/103
+__ https://github.com/nirum-lang/nirum-python/pull/108
 
 
 Version 0.6.1
@@ -98,10 +98,10 @@ Released on July 11, 2017.
 
 - Fixed ``NameError`` raised from forward references.  [`compiler #138`_]
 
-.. _#79: https://github.com/spoqa/nirum-python/issues/79
-.. _compiler #138: https://github.com/spoqa/nirum/issues/138
-.. _nirum-python-http: https://github.com/spoqa/nirum-python-http
-.. _nirum-python-wsgi: https://github.com/spoqa/nirum-python-wsgi
+.. _#79: https://github.com/nirum-lang/nirum-python/issues/79
+.. _compiler #138: https://github.com/nirum-lang/nirum/issues/138
+.. _nirum-python-http: https://github.com/nirum-lang/nirum-python-http
+.. _nirum-python-wsgi: https://github.com/nirum-lang/nirum-python-wsgi
 
 
 Version 0.5.6
@@ -122,7 +122,7 @@ Released on April 5, 2018.
   function) to ``nirum.datastructures.Map`` and ``nirum.datastructures.List``.
   [`#110`_]
 
-.. _#110: https://github.com/spoqa/nirum-python/issues/110
+.. _#110: https://github.com/nirum-lang/nirum-python/issues/110
 
 
 Version 0.5.4
@@ -159,7 +159,7 @@ Released on June 23, 2017.
   it became a new-style class also on Python 2. (As Python 3 has only new-style
   class, there's no change on Python 3.)
 
-.. _#87: https://github.com/spoqa/nirum-python/pull/87
+.. _#87: https://github.com/nirum-lang/nirum-python/pull/87
 
 
 Version 0.5.1
@@ -186,9 +186,9 @@ Released on June 22, 2017.
 - Corrected a typo ``Accepts`` on request headers ``Client`` makes to
   ``Accept``.
 
-.. _#78: https://github.com/spoqa/nirum-python/pull/78
-.. _#83: https://github.com/spoqa/nirum-python/issues/83
-.. _#80: https://github.com/spoqa/nirum-python/pull/80
+.. _#78: https://github.com/nirum-lang/nirum-python/pull/78
+.. _#83: https://github.com/nirum-lang/nirum-python/issues/83
+.. _#80: https://github.com/nirum-lang/nirum-python/pull/80
 
 
 Version 0.5.0
@@ -199,7 +199,7 @@ Released on June 1, 2017.
 - Service methods became able to specify its error type. [`#71`_]
 - Added ``nirum-server`` command to run simply Nirum service.
 
-.. _#71: https://github.com/spoqa/nirum-python/issues/71
+.. _#71: https://github.com/nirum-lang/nirum-python/issues/71
 
 
 Version 0.4.3
@@ -248,6 +248,6 @@ Released on March 20, 2017.
   ``nirum.datastructures.List`` as ``list_type`` to avoid name
   conflict with user-defined types.
 
-__ https://github.com/spoqa/nirum/blob/f1629787f45fef17eeab8b4f030c34580e0446b8/docs/serialization.md
-.. _#66: https://github.com/spoqa/nirum-python/pull/66
-.. _#49: https://github.com/spoqa/nirum-python/issues/49
+__ https://github.com/nirum-lang/nirum/blob/f1629787f45fef17eeab8b4f030c34580e0446b8/docs/serialization.md
+.. _#66: https://github.com/nirum-lang/nirum-python/pull/66
+.. _#49: https://github.com/nirum-lang/nirum-python/issues/49

@@ -39,6 +39,10 @@ install_requires = [
     'six', 'iso8601',
 ] + service_requires
 tests_require = [
+    # flake8 does not yet support pycodestyle 2.4.0.
+    # Can be remove after this issue is fixed:
+    # https://gitlab.com/pycqa/flake8/issues/415
+    'pycodestyle >= 2.0, < 2.4.0',
     'pytest >= 3.1.2, < 4.0.0',
     'pytest-flake8 >= 0.9.1, < 1.0.0',
     'flake8-import-order >= 0.12, < 1.0',
@@ -79,8 +83,8 @@ setup(
     version=get_version(),
     description='The Nirum runtime library for Python',
     long_description=readme(),
-    url='https://github.com/spoqa/nirum-python',
-    bugtrack_url='https://github.com/spoqa/nirum/issues',
+    url='https://github.com/nirum-lang/nirum-python',
+    bugtrack_url='https://github.com/nirum-lang/nirum/issues',
     author='Kang Hyojun',
     author_email='iam.kanghyojun' '@' 'gmail.com',
     license='MIT license',
