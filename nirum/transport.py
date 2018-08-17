@@ -22,7 +22,7 @@ class Transport(object):
                             call.  See also `Nirum's serialization format
                             docs <serialization-format>`_.
         :type method_name: :class:`str`
-        :param paylaod: A mapping of parameter names to serialized argument
+        :param payload: A mapping of parameter names to serialized argument
                         values.  The keys have to be normalized behind names
                         of parameters.  The values have to be serialized
                         argument values.  See also `Nirum's serialization
