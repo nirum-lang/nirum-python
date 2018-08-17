@@ -201,7 +201,7 @@ def deserialize_meta(cls, data):
           hasattr(cls, '__nirum_inner_type__')):
         d = deserialize_unboxed_type(cls, data)
     elif type(cls) is typing.TupleMeta:
-        # typing.Tuple dosen't have either `__origin__` and `__args__`
+        # typing.Tuple doesn't have either `__origin__` and `__args__`
         # so it have to be handled special case.
         d = deserialize_tuple_type(cls, data)
     elif is_support_abstract_type(cls):

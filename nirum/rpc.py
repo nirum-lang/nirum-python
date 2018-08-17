@@ -138,7 +138,7 @@ class WsgiApp:
             return self.error(
                 400,
                 request,
-                message="Service dosen't have procedure named '{}'.".format(
+                message="Service doesn't have procedure named '{}'.".format(
                     request_method
                 )
             )
